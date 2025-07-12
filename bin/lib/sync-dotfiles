@@ -14,8 +14,8 @@ import fs from 'fs-extra';
 import { globSync } from 'glob';
 import prompts from 'prompts';
 
-const HOME = path.dirname(path.dirname(path.dirname(import.meta.dirname)));
-const TILDE_DIR = `${HOME}/dotfiles/tilde`;
+const HOME = process.env.HOME;
+const TILDE_DIR = path.join(HOME, 'dotfiles', 'tilde');
 const IGNORE = ['.config', '.local', '.DS_Store', 'Brewfile.lock.json'];
 const SPECIALS = [
 	{
@@ -58,10 +58,11 @@ async function confirmAction(message) {
 async function syncDotfiles() {
 	process.chdir(TILDE_DIR);
 	const files = [
-		...globSync('*'),
+		...globSync('*', { dot: true }),
 		...globSync('.config/*'),
 		...globSync('.local/share/*'),
 	];
+	console.log('Files found:', files);
 
 	for (const sourcePath of files) {
 		const destPath = `${HOME}/${sourcePath}`;

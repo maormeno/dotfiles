@@ -45,12 +45,13 @@ if [ ! -f /etc/pam.d/sudo_local ]; then
 fi
 
 # Install XCode command line tools, and accept its license
-echo "🙅🏻‍♂️ Installing XCode command line tools..."
-xcode-select --install
-echo
-echo "✍🏼 Accepting XCode license..."
-xcodebuild -license
-echo
+# Note: Commented because it's already installed on the machine
+# echo "🙅🏻‍♂️ Installing XCode command line tools..."
+# xcode-select --install
+# echo
+# echo "✍🏼 Accepting XCode license..."
+# xcodebuild -license
+# echo
 
 # Node.js
 echo "🚀 Installing Node.js dependencies..."

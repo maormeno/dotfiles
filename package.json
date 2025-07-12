@@ -6,8 +6,7 @@
   "scripts": {
     "lint": "eslint . --cache --fix",
     "test": "npm run lint",
-    "posttest": "npm run format",
-    "format": "prettier --log-level warn --ignore-unknown --write \"**/*.{js,cjs,md,json,sh}\" \"bin/*\""
+    "posttest": "npm run format"
   },
   "engines": {
     "node": ">=20"

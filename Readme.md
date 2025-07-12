@@ -1,4 +1,4 @@
-# Artem Sapegin’s dotfiles 🐿️
+# Artem Sapegin’s dotfiles 🐿️ (Editado para funcionar en mi Macbook)
 
 ![Ghostty](https://github.com/sapegin/squirrelsong/raw/master/themes/Ghostty/screenshot-dark.jpg)
 
@@ -32,7 +32,7 @@ Prerequisites:
 2. Clone dotfiles:
 
 ```shell
-git clone git@github.com:sapegin/dotfiles.git ~/dotfiles && cd ~/dotfiles
+git clone git@github.com:maormeno/dotfiles.git ~/dotfiles && cd ~/dotfiles
 ```
 
 3. Run setup script:

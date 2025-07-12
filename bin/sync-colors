@@ -80,16 +80,16 @@ console.log('🌈 Installing Ghostty theme...');
 await install('themes/Ghostty/Squirrelsong Dark', '.config/ghostty/themes');
 
 /**
- * Peek
+ * Peek // Which we don't use
  */
 
-console.log('🌈 Installing Peek theme...');
+/* console.log('🌈 Installing Peek theme...');
 
 const peekTheme = await download('themes/Peek/custom.css');
 write(
 	`${HOME}/Library/Group Containers/9V456WSURS.com.bigzlabs.peekgroup/Library/Application Support/Styles/custom.css`,
 	peekTheme
-);
+); */
 
 /**
  * Bear

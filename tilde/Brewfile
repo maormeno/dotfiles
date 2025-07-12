@@ -1,7 +1,7 @@
 # Taps
 tap "git-friendly/git-friendly"
-tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
+# tap "homebrew/bundle" # Now comes with default bundle that is already included in Homebrew
+# tap "homebrew/cask-fonts" # Now comes with default cask that is already included in Homebrew
 
 # CLI tools
 brew "bat" # `cat` replacement

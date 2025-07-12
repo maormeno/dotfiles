@@ -4,7 +4,7 @@ local config = wezterm.config_builder()
 --- 8< -- 8< ---
 
 -- Fonts
-local font = 'MonoLisa'
+local font = 'Fira Code'
 config.font = wezterm.font_with_fallback({
 	{ family = font, weight = 'Regular', italic = false },
   { family = 'Symbols Nerd Font Mono', scale = 1 },
