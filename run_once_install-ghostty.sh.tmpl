@@ -1,0 +1,31 @@
+#!/bin/bash
+# Install Ghostty terminal - runs once on setup
+
+set -e
+
+echo "Installing Ghostty terminal..."
+
+# Check OS type
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS installation
+    if command -v brew &> /dev/null; then
+        if ! command -v ghostty &> /dev/null; then
+            echo "Installing Ghostty via Homebrew..."
+            brew install --cask ghostty
+        else
+            echo "Ghostty already installed"
+        fi
+    else
+        echo "Homebrew not found. Please install Homebrew first: https://brew.sh"
+        exit 1
+    fi
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux installation
+    echo "For Linux, please install Ghostty manually from: https://ghostty.org"
+    echo "Or use your distribution's package manager"
+else
+    echo "Unsupported OS: $OSTYPE"
+    exit 1
+fi
+
+echo "Ghostty installation complete"

@@ -1,0 +1,28 @@
+# Minimalistic .zshrc with essential plugins only
+
+# History configuration
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+
+# Essential completions
+autoload -Uz compinit
+compinit
+
+# zinit - Plugin manager (minimal setup)
+if [[ ! -d ~/.local/share/zinit/zinit.git ]]; then
+    mkdir -p ~/.local/share/zinit
+    git clone https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git
+fi
+source ~/.local/share/zinit/zinit.git/zinit.zsh
+
+# Essential plugins only
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+
+# Prompt - Simple and clean
+autoload -Uz promptinit
+promptinit
+prompt adam1

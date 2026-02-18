@@ -1,0 +1,31 @@
+#!/bin/bash
+# Install Arc browser - runs once on setup
+
+set -e
+
+echo "Installing Arc browser..."
+
+# Check OS type
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS installation
+    if command -v brew &> /dev/null; then
+        if ! command -v arc &> /dev/null && [[ ! -d "/Applications/Arc.app" ]]; then
+            echo "Installing Arc via Homebrew..."
+            brew install --cask arc
+        else
+            echo "Arc already installed"
+        fi
+    else
+        echo "Homebrew not found. Please install Homebrew first: https://brew.sh"
+        exit 1
+    fi
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux - Arc is primarily for macOS, but check for alternatives
+    echo "Arc browser is primarily for macOS."
+    echo "Please visit https://arc.net for more information"
+else
+    echo "Unsupported OS: $OSTYPE"
+    exit 1
+fi
+
+echo "Arc browser installation complete"

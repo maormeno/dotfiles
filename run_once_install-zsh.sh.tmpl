@@ -1,0 +1,50 @@
+#!/bin/bash
+# Install Zsh and essential plugins - runs once on setup
+
+set -e
+
+echo "Setting up Zsh..."
+
+# Check if Zsh is installed
+if ! command -v zsh &> /dev/null; then
+    echo "Installing Zsh..."
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if command -v brew &> /dev/null; then
+            brew install zsh
+        else
+            echo "Homebrew not found. Please install Homebrew first: https://brew.sh"
+            exit 1
+        fi
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y zsh
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y zsh
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm zsh
+        else
+            echo "Unsupported package manager. Please install Zsh manually."
+            exit 1
+        fi
+    fi
+else
+    echo "Zsh already installed"
+fi
+
+# Set Zsh as default shell if not already
+if [[ "$SHELL" != *"zsh"* ]]; then
+    echo "Setting Zsh as default shell..."
+    chsh -s $(which zsh)
+    echo "Please log out and log back in for the shell change to take effect"
+fi
+
+# Create zinit directory if it doesn't exist
+if [[ ! -d ~/.local/share/zinit/zinit.git ]]; then
+    echo "Installing zinit plugin manager..."
+    mkdir -p ~/.local/share/zinit
+    git clone https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git
+else
+    echo "zinit already installed"
+fi
+
+echo "Zsh setup complete"
