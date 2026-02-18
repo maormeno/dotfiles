@@ -34,8 +34,11 @@ fi
 # Set Zsh as default shell if not already
 if [[ "$SHELL" != *"zsh"* ]]; then
     echo "Setting Zsh as default shell..."
-    chsh -s $(which zsh)
-    echo "Please log out and log back in for the shell change to take effect"
+    if chsh -s $(which zsh) 2>/dev/null; then
+        echo "Please log out and log back in for the shell change to take effect"
+    else
+        echo "Failed to change default shell. You may need to run: chsh -s \$(which zsh)"
+    fi
 fi
 
 # Create zinit directory if it doesn't exist

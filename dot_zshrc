@@ -11,6 +11,8 @@ autoload -Uz compinit
 compinit
 
 # zinit - Plugin manager (minimal setup)
+# Note: zinit should be installed by run_once_install-zsh.sh.tmpl
+# This is a fallback in case the user applies .zshrc manually
 if [[ ! -d ~/.local/share/zinit/zinit.git ]]; then
     mkdir -p ~/.local/share/zinit
     git clone https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git

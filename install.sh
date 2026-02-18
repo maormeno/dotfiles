@@ -15,9 +15,16 @@ if ! command -v chezmoi &> /dev/null; then
             brew install chezmoi
         else
             # Install Homebrew first
-            echo "Installing Homebrew..."
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            brew install chezmoi
+            echo "Homebrew is required but not installed."
+            read -p "Install Homebrew now? (y/n) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                brew install chezmoi
+            else
+                echo "Please install Homebrew manually: https://brew.sh"
+                exit 1
+            fi
         fi
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         sh -c "$(curl -fsLS get.chezmoi.io)"
