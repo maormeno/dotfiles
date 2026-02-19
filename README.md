@@ -89,6 +89,11 @@ Repo-only files are excluded from apply via `.chezmoiignore`:
 - `.setup.sh`
 - `.github/`
 
+## Acknowledgments
+
+This setup was heavily informed by Carlos Cuesta's dotfiles repository:
+[carloscuesta/dotfiles](https://github.com/carloscuesta/dotfiles?tab=readme-ov-file)
+
 ## License
 
 MIT
