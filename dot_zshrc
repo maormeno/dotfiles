@@ -26,6 +26,11 @@ if [[ -n "$BREW_PREFIX" && -d "$BREW_PREFIX/share/zsh-completions" ]]; then
   fpath=("$BREW_PREFIX/share/zsh-completions" $fpath)
 fi
 
+# Load user completion definitions (for tools like Codex).
+if [[ -d "$HOME/.zsh/completions" ]]; then
+  fpath=("$HOME/.zsh/completions" $fpath)
+fi
+
 # Initialize completion system.
 autoload -Uz compinit
 compinit

@@ -17,3 +17,6 @@ alias ls='eza --color=always --no-quotes'  # Cleaner file listing.
 alias c='clear'
 alias zshedit='$EDITOR ~/.zshrc'
 alias f='open -a Finder ./'
+alias cursorcfg='open "$HOME/Library/Application Support/Cursor/User"' # Open Cursor User config directory.
+alias cursor-settings='$EDITOR "$HOME/Library/Application Support/Cursor/User/settings.json"' # Edit Cursor settings file.
+alias cursor-keys='$EDITOR "$HOME/Library/Application Support/Cursor/User/keybindings.json"' # Edit Cursor keybindings file.

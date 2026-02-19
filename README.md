@@ -32,6 +32,70 @@ What `.setup.sh` does:
 4. Runs `chezmoi init --apply maormeno/dotfiles` on first setup.
 5. Runs `chezmoi update` on already-initialized setups.
 
+## Codex Installation
+
+Codex CLI and Codex desktop app are installed automatically on first machine setup by:
+`run_once_after_setup-codex.sh.tmpl`
+
+What it does:
+
+1. Requires Homebrew on macOS.
+2. Installs the `codex` Homebrew cask (CLI) if missing.
+3. Installs the `codex-app` Homebrew cask (desktop app) if missing.
+4. Generates Zsh completion at `~/.zsh/completions/_codex`.
+5. Prints a reminder to run `codex login`.
+
+Manual install/update command:
+
+```bash
+brew install --cask codex codex-app
+```
+
+Manual completion refresh command:
+
+```bash
+mkdir -p ~/.zsh/completions
+codex completion zsh > ~/.zsh/completions/_codex
+```
+
+## Arc and Cursor Defaults
+
+Default browser/IDE preferences are applied once by:
+`run_once_after_setup-default-apps.sh.tmpl`
+
+What it does:
+
+1. Sets Arc as default browser handler for `http` and `https`.
+2. Sets Cursor as default handler for common code/text file types.
+3. Sets Git `core.editor` to `cursor --wait`.
+
+Cursor tweak shortcuts (from your shell):
+
+```bash
+cursorcfg
+cursor-settings
+cursor-keys
+```
+
+Managed Cursor config files:
+
+- `~/Library/Application Support/Cursor/User/settings.json`
+- `~/Library/Application Support/Cursor/User/keybindings.json`
+- `~/Library/Application Support/Cursor/User/snippets/`
+
+Edit managed Cursor files with chezmoi:
+
+```bash
+chezmoi edit "$HOME/Library/Application Support/Cursor/User/settings.json"
+chezmoi edit "$HOME/Library/Application Support/Cursor/User/keybindings.json"
+```
+
+If you need to re-run this manually:
+
+```bash
+chezmoi execute-template < run_once_after_setup-default-apps.sh.tmpl | bash
+```
+
 ## Daily Usage
 
 Use this command to pull latest changes and apply them:
@@ -116,6 +180,8 @@ Each script runs `brew bundle` for its Brewfile. A checksum comment in each scri
 - Ghostty config: `dot_config/ghostty/config` for terminal visuals and window behavior.
 - Starship config: `dot_config/starship/starship.toml` for a clean prompt layout.
 - Git visual config: `dot_config/git/config` (delta pager and color tuning).
+- Cursor user config: `Library/Application Support/Cursor/User/` (settings, keybindings, snippets).
+- Codex install hook: `run_once_after_setup-codex.sh.tmpl` for first-run CLI installation.
 - Dotfile fragments: `dot_dotfiles/` (`.aliases`, `.exports`, `.functions`, `.extra`).
 
 ## Zsh Configuration
@@ -134,6 +200,11 @@ Each script runs `brew bundle` for its Brewfile. A checksum comment in each scri
 - Auto-hide Dock.
 - Finder icon view preference.
 - Trackpad right-click and scroll-direction defaults.
+
+`run_once_after_setup-default-apps.sh.tmpl` applies one-time app defaults:
+
+- Arc as default browser for web links (`http`/`https`).
+- Cursor as default IDE/file handler.
 
 ## Repository Notes
 

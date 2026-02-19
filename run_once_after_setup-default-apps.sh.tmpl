@@ -1,0 +1,62 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Apply one-time default app preferences for browser and IDE.
+echo "Applying one-time default app preferences (Arc/Cursor)..."
+
+# duti is used to set default handlers for URL schemes and file types.
+if ! command -v duti >/dev/null 2>&1; then
+  echo "duti is not installed; skipping default app handler setup."
+  exit 0
+fi
+
+# Try to set a handler, but continue when LaunchServices rejects a specific type.
+set_handler() {
+  local bundle_id="$1"
+  local target="$2"
+  if ! duti -s "${bundle_id}" "${target}" all >/dev/null 2>&1; then
+    echo "Could not set handler '${target}' for bundle '${bundle_id}'."
+  fi
+}
+
+# Set Arc as default browser for web links.
+if [[ -d "/Applications/Arc.app" ]]; then
+  ARC_BUNDLE_ID="company.thebrowser.Browser"
+  set_handler "${ARC_BUNDLE_ID}" http
+  set_handler "${ARC_BUNDLE_ID}" https
+  echo "Arc set as default handler for http/https."
+else
+  echo "Arc.app not found; skipping browser default setup."
+fi
+
+# Set Cursor as default for common source/text document types.
+if [[ -d "/Applications/Cursor.app" ]]; then
+  CURSOR_BUNDLE_ID="$(
+    /usr/libexec/PlistBuddy \
+      -c 'Print :CFBundleIdentifier' \
+      "/Applications/Cursor.app/Contents/Info.plist" 2>/dev/null || true
+  )"
+
+  if [[ -n "${CURSOR_BUNDLE_ID}" ]]; then
+    set_handler "${CURSOR_BUNDLE_ID}" public.source-code
+    set_handler "${CURSOR_BUNDLE_ID}" public.plain-text
+    set_handler "${CURSOR_BUNDLE_ID}" public.json
+    set_handler "${CURSOR_BUNDLE_ID}" public.shell-script
+    set_handler "${CURSOR_BUNDLE_ID}" net.daringfireball.markdown
+    echo "Cursor set as default handler for common code/text files."
+  else
+    echo "Could not resolve Cursor bundle id; skipping Cursor file associations."
+  fi
+
+  # Ensure Git commit editor matches the default IDE.
+  if command -v git >/dev/null 2>&1; then
+    git config --global core.editor "cursor --wait"
+    echo "Git core.editor set to cursor --wait."
+  fi
+else
+  echo "Cursor.app not found; skipping IDE default setup."
+fi
+
+echo "Default app preferences applied."
+{{- end -}}

@@ -1,0 +1,38 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Install Codex tooling once during first machine setup.
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required to install Codex."
+  exit 1
+fi
+
+# Install OpenAI Codex CLI when missing.
+if command -v codex >/dev/null 2>&1; then
+  echo "Codex CLI already installed: $(codex --version 2>/dev/null || echo unknown)"
+else
+  echo "Installing Codex CLI..."
+  brew install --cask codex
+  echo "Codex CLI installed."
+fi
+
+# Install Codex desktop app when missing.
+if [[ -d "/Applications/Codex.app" ]]; then
+  echo "Codex app already installed."
+else
+  echo "Installing Codex app..."
+  brew install --cask codex-app
+  echo "Codex app installed."
+fi
+
+# Generate zsh completion so `codex` subcommands auto-complete.
+if command -v codex >/dev/null 2>&1; then
+  mkdir -p "${HOME}/.zsh/completions"
+  codex completion zsh > "${HOME}/.zsh/completions/_codex"
+  echo "Codex zsh completion installed at ~/.zsh/completions/_codex."
+fi
+
+# Next step reminder for authentication.
+echo "Run 'codex login' to authenticate."
+{{- end -}}

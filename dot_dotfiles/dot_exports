@@ -1,7 +1,16 @@
 # Environment exports shared by shell sessions.
 
-# Keep editor behavior consistent across tools.
-export EDITOR='code --wait'
+# Prefer Cursor as the default editor/IDE when available.
+if command -v cursor >/dev/null 2>&1; then
+  export EDITOR='cursor --wait'
+else
+  # Fallback editor when Cursor is not installed yet.
+  export EDITOR='code --wait'
+fi
+
+# Keep visual editor and Git editor aligned with EDITOR.
+export VISUAL="$EDITOR"
+export GIT_EDITOR="$EDITOR"
 
 # Keep locale explicit for tools that depend on UTF-8.
 export LC_ALL=en_US.UTF-8
