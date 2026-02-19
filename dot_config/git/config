@@ -6,6 +6,11 @@
   # Keep Git editor aligned with the configured IDE default.
   editor = cursor --wait
 
+[user]
+  # Default commit identity.
+  name = Mateo Ormeno
+  email = maormeno@uc.cl
+
 [color]
   # Enable color output when terminal supports it.
   ui = auto
