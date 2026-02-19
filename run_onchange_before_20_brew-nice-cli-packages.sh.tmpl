@@ -10,6 +10,8 @@ if ! command -v brew >/dev/null 2>&1; then
   exit 1
 fi
 
-# Install/update optional quality-of-life CLI packages.
-brew bundle --file="$HOME/.Brewfile.nice-cli"
+# Install/update nice CLI packages directly from managed source content.
+brew bundle --file=/dev/stdin <<'EOF'
+{{ include "dot_Brewfile.nice-cli" }}
+EOF
 {{- end -}}
