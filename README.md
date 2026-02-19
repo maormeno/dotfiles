@@ -134,7 +134,7 @@ Applied target files in your home directory:
 
 `run_once_after_setup-default-apps.sh.tmpl` sets:
 
-1. Arc as default for `http` and `https`.
+1. Arc as default for URL schemes `http` and `https` (verified with `duti -d`).
 2. Cursor as default for common code/text file types.
 
 Git `core.editor` is managed declaratively in `dot_config/git/config`.
@@ -235,7 +235,9 @@ chezmoi update
 
 ### `duti`/LaunchServices handler warnings
 
-Defaults may partially apply if macOS rejects a specific mapping. Current setup prioritizes robust browser defaults (`http`/`https`) and continues safely.
+Defaults may partially apply if macOS rejects a specific mapping. Current setup checks URL-scheme handlers (`http`/`https`) with `duti -d` and reports the active bundle ids.
+
+`duti -x http` / `duti -x https` checks file extension handlers (`.http`, `.https`), which are different from browser URL-scheme defaults used when tools open web links.
 
 ### `zsh compinit: insecure directories`
 

@@ -11,21 +11,81 @@ if ! command -v duti >/dev/null 2>&1; then
   exit 0
 fi
 
-# Try to set a handler, but continue when LaunchServices rejects a specific type.
-set_handler() {
+# Try to set a URL-scheme handler.
+set_url_scheme_handler() {
   local bundle_id="$1"
-  local target="$2"
-  if ! duti -s "${bundle_id}" "${target}" all >/dev/null 2>&1; then
-    echo "Could not set handler '${target}' for bundle '${bundle_id}'."
+  local scheme="$2"
+  duti -s "${bundle_id}" "${scheme}" >/dev/null 2>&1
+}
+
+# Try to set a content-type/UTI handler, but continue if LaunchServices rejects it.
+set_content_handler() {
+  local bundle_id="$1"
+  local content_type="$2"
+  if ! duti -s "${bundle_id}" "${content_type}" all >/dev/null 2>&1; then
+    echo "Could not set content handler '${content_type}' for bundle '${bundle_id}'."
   fi
 }
 
-# Set Arc as default browser for web links.
+current_url_scheme_handler() {
+  local scheme="$1"
+  duti -d "${scheme}" 2>/dev/null || true
+}
+
+normalize_bundle_id() {
+  tr '[:upper:]' '[:lower:]' <<<"${1:-}"
+}
+
+arc_is_default_browser() {
+  local arc_bundle_id="$1"
+  local http_handler="$2"
+  local https_handler="$3"
+
+  [[ "$(normalize_bundle_id "${http_handler}")" == "$(normalize_bundle_id "${arc_bundle_id}")" ]] && \
+    [[ "$(normalize_bundle_id "${https_handler}")" == "$(normalize_bundle_id "${arc_bundle_id}")" ]]
+}
+
+set_arc_url_scheme_defaults() {
+  local arc_bundle_id="$1"
+  local http_handler=""
+  local https_handler=""
+
+  set_url_scheme_handler "${arc_bundle_id}" http || true
+  set_url_scheme_handler "${arc_bundle_id}" https || true
+
+  http_handler="$(current_url_scheme_handler http)"
+  https_handler="$(current_url_scheme_handler https)"
+
+  if arc_is_default_browser "${arc_bundle_id}" "${http_handler}" "${https_handler}"; then
+    echo "Arc set as default URL scheme handler for http/https."
+    return 0
+  fi
+
+  echo "Arc default browser not fully applied. Current handlers: http='${http_handler:-unknown}', https='${https_handler:-unknown}'."
+  echo "If macOS prompted for confirmation, accept it and run this hook again."
+  return 1
+}
+
+# Set Arc as default browser for web links (URL schemes, not file extensions).
+ARC_APP_PATH=""
 if [[ -d "/Applications/Arc.app" ]]; then
-  ARC_BUNDLE_ID="company.thebrowser.Browser"
-  set_handler "${ARC_BUNDLE_ID}" http
-  set_handler "${ARC_BUNDLE_ID}" https
-  echo "Arc set as default handler for http/https."
+  ARC_APP_PATH="/Applications/Arc.app"
+elif [[ -d "${HOME}/Applications/Arc.app" ]]; then
+  ARC_APP_PATH="${HOME}/Applications/Arc.app"
+fi
+
+if [[ -n "${ARC_APP_PATH}" ]]; then
+  ARC_BUNDLE_ID="$(
+    /usr/libexec/PlistBuddy \
+      -c 'Print :CFBundleIdentifier' \
+      "${ARC_APP_PATH}/Contents/Info.plist" 2>/dev/null || true
+  )"
+
+  if [[ -n "${ARC_BUNDLE_ID}" ]]; then
+    set_arc_url_scheme_defaults "${ARC_BUNDLE_ID}" || true
+  else
+    echo "Could not resolve Arc bundle id; skipping browser default setup."
+  fi
 else
   echo "Arc.app not found; skipping browser default setup."
 fi
@@ -39,11 +99,11 @@ if [[ -d "/Applications/Cursor.app" ]]; then
   )"
 
   if [[ -n "${CURSOR_BUNDLE_ID}" ]]; then
-    set_handler "${CURSOR_BUNDLE_ID}" public.source-code
-    set_handler "${CURSOR_BUNDLE_ID}" public.plain-text
-    set_handler "${CURSOR_BUNDLE_ID}" public.json
-    set_handler "${CURSOR_BUNDLE_ID}" public.shell-script
-    set_handler "${CURSOR_BUNDLE_ID}" net.daringfireball.markdown
+    set_content_handler "${CURSOR_BUNDLE_ID}" public.source-code
+    set_content_handler "${CURSOR_BUNDLE_ID}" public.plain-text
+    set_content_handler "${CURSOR_BUNDLE_ID}" public.json
+    set_content_handler "${CURSOR_BUNDLE_ID}" public.shell-script
+    set_content_handler "${CURSOR_BUNDLE_ID}" net.daringfireball.markdown
     echo "Cursor set as default handler for common code/text files."
   else
     echo "Could not resolve Cursor bundle id; skipping Cursor file associations."
