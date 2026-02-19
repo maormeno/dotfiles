@@ -48,6 +48,55 @@ chezmoi apply
 chezmoi edit ~/.zshrc
 ```
 
+## Git and SSH Setup
+
+Set up Git identity/config first using the official GitHub guide:
+[Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git#setting-up-git)
+
+Use SSH and always use a custom key filename (not the default `id_ed25519`).
+
+1. Generate an SSH key.
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+At the prompt, enter a custom file path:
+
+```text
+Enter file in which to save the key (/Users/mateo/.ssh/id_ed25519): /Users/mateo/.ssh/maormeno_git_key
+```
+
+2. Add the key to your macOS SSH agent.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add --apple-use-keychain ~/.ssh/maormeno_git_key
+```
+
+3. Add the public key to GitHub.
+
+```bash
+pbcopy < ~/.ssh/maormeno_git_key.pub
+```
+
+Then paste it in GitHub `Settings` -> `SSH and GPG keys`.
+
+4. Use the same key name in `~/.ssh/config`.
+
+```sshconfig
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/maormeno_git_key
+  IdentitiesOnly yes
+```
+
+Use the same basename (`maormeno_git_key`) in all related places:
+private key path, `.pub` file, and `IdentityFile`.
+
+You can also manage `~/.ssh/config` with chezmoi by adding a managed file in this repo.
+
 ## Package Management
 
 This repository keeps package declarations in two files:
