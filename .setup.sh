@@ -117,6 +117,23 @@ ensure_homebrew() {
   echo "Homebrew installed."
 }
 
+# Ensure git is available for chezmoi operations.
+ensure_git() {
+  if command -v git >/dev/null 2>&1; then
+    echo "git already installed."
+    return
+  fi
+
+  echo "git is required."
+  if ! prompt_yes_no "Install git now?"; then
+    echo "Setup cancelled: git is required."
+    exit 1
+  fi
+
+  brew install git
+  echo "git installed."
+}
+
 # Ensure chezmoi is installed before init/update operations.
 ensure_chezmoi() {
   if command -v chezmoi >/dev/null 2>&1; then
@@ -157,6 +174,7 @@ echo "Setting up dotfiles..."
 ensure_macos
 ensure_xcode_clt
 ensure_homebrew
+ensure_git
 ensure_chezmoi
 run_chezmoi
 

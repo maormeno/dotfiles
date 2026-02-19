@@ -40,8 +40,9 @@ It does this in order:
 1. Verifies macOS.
 2. Ensures Xcode Command Line Tools are installed (prompted).
 3. Ensures Homebrew is installed (prompted).
-4. Ensures chezmoi is installed (prompted).
-5. Runs one of:
+4. Ensures git is installed (prompted).
+5. Ensures chezmoi is installed (prompted).
+6. Runs one of:
    - `chezmoi init --apply maormeno/dotfiles` (first machine setup)
    - `chezmoi update` (already initialized machine)
 
