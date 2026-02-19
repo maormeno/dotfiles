@@ -1,0 +1,13 @@
+# Version control
+brew "git" # Distributed version control system.
+brew "git-delta" # Better side-by-side and colorized Git pager output.
+
+# Better defaults for common shell workflows
+brew "bat" # cat replacement with syntax highlighting.
+brew "eza" # Modern ls replacement with clearer output.
+brew "fzf" # Fuzzy finder for files, history, and command output.
+
+# Developer runtime and shell UX
+brew "fnm" # Fast Node.js version manager.
+brew "starship" # Cross-shell prompt engine.
+brew "glow" # Render Markdown nicely in the terminal.

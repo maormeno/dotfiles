@@ -1,0 +1,5 @@
+# Local reference snapshot used only for planning/comparison.
+reference-dotfiles-repo/
+
+# macOS Finder metadata files.
+.DS_Store

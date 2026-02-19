@@ -1,0 +1,11 @@
+# Small utility functions used in interactive shells.
+
+# Create a directory and enter it immediately.
+mcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
+# Create a zip archive from a folder name.
+zipf() {
+  zip -r "$1".zip "$1"
+}

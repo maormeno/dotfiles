@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Trigger rerun when the essentials Brewfile content changes.
+# brewfile-sha256: {{ include "dot_Brewfile.essentials" | sha256sum }}
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required to install essentials packages."
+  exit 1
+fi
+
+# Install/update essentials packages declared in the managed Brewfile.
+brew bundle --file="$HOME/.Brewfile.essentials"
+{{- end -}}

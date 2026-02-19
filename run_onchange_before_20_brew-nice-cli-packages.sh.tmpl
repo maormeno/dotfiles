@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Trigger rerun when the nice CLI Brewfile content changes.
+# brewfile-sha256: {{ include "dot_Brewfile.nice-cli" | sha256sum }}
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required to install nice CLI packages."
+  exit 1
+fi
+
+# Install/update optional quality-of-life CLI packages.
+brew bundle --file="$HOME/.Brewfile.nice-cli"
+{{- end -}}

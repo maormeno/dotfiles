@@ -1,0 +1,17 @@
+# Environment exports shared by shell sessions.
+
+# Keep editor behavior consistent across tools.
+export EDITOR='code --wait'
+
+# Keep locale explicit for tools that depend on UTF-8.
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# Keep XDG config path explicit.
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# Point Starship to the managed config file.
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
+
+# Slightly stronger default directory color in eza.
+export EZA_COLORS='di=1;34'

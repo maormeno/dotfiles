@@ -1,0 +1,32 @@
+# Ghostty visual configuration.
+
+# Keep font size explicit so terminal scale is predictable.
+font-size=16
+
+# Add breathing room around content.
+window-padding-x=12
+window-padding-y=10
+
+# Keep bold text visually distinct.
+bold-is-bright=true
+
+# Use Ghostty default theme resolution (fewer compatibility risks).
+# Add an explicit theme later if you choose a specific palette.
+
+# Hide mouse cursor while typing to reduce visual noise.
+mouse-hide-while-typing=true
+
+# Keep titlebar cleaner on macOS.
+macos-titlebar-proxy-icon=hidden
+macos-titlebar-style=tabs
+
+# Use an underline cursor for lower visual obstruction.
+cursor-style=underline
+
+# Start shells from the home directory by default.
+working-directory=home
+
+# Prevent inheriting cwd across new windows/tabs/splits.
+window-inherit-working-directory=false
+tab-inherit-working-directory=false
+split-inherit-working-directory=false

@@ -1,0 +1,19 @@
+# Core shell aliases with mostly visual/readability improvements.
+
+# Safer defaults for destructive file commands.
+alias rm='rm -i'
+alias cp='cp -iv'
+alias mv='mv -iv'
+
+# Fast navigation helpers.
+alias ..='cd ../'
+alias ...='cd ../../'
+
+# Readability-focused command replacements.
+alias cat='bat --paging=never'      # Syntax-highlighted file output.
+alias ls='eza --color=always --no-quotes'  # Cleaner file listing.
+
+# Convenience shortcuts.
+alias c='clear'
+alias zshedit='$EDITOR ~/.zshrc'
+alias f='open -a Finder ./'

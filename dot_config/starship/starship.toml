@@ -1,0 +1,60 @@
+# Starship schema for editor validation and completions.
+"$schema" = "https://starship.rs/config-schema.json"
+
+# Add one blank line before each prompt block.
+add_newline = true
+
+# Keep prompt compact: context + git + time, then prompt char.
+format = """
+$username$directory$git_branch$git_status$fill$time
+$character
+"""
+
+# Fill remaining width before time for clean alignment.
+[fill]
+symbol = " "
+
+# Show current user so remote/sudo sessions are obvious.
+[username]
+show_always = true
+format = "[$user]($style) "
+style_user = "bold red"
+
+# Show path in a strong readable color.
+[directory]
+style = "bold green"
+read_only = " 🔒"
+
+# Show branch with explicit icon.
+[git_branch]
+style = "bold blue"
+format = "on [$symbol$branch]($style) "
+symbol = " "
+
+# Show ahead/behind state with simple arrows.
+[git_status]
+format = "($ahead_behind($style) )"
+ahead = "[↑](green bold)"
+behind = "[↓](red bold)"
+diverged = "[↕](yellow bold)"
+
+# Show local time at prompt render.
+[time]
+disabled = false
+time_format = "%R"
+style = "bold white"
+format = "[$time]($style)"
+
+# Keep language/runtime modules off for a cleaner prompt.
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[java]
+disabled = true
+[ruby]
+disabled = true

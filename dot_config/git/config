@@ -1,0 +1,42 @@
+# Git visual-focused configuration.
+
+[core]
+  # Use delta for richer side-by-side diffs.
+  pager = delta
+
+[color]
+  # Enable color output when terminal supports it.
+  ui = auto
+
+[color "branch"]
+  # Highlight current/local/remote branches consistently.
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  # Use explicit colors for diff metadata and changes.
+  meta = yellow bold
+  frag = magenta bold
+  old = red
+  new = green
+
+[color "status"]
+  # Make status output easier to scan quickly.
+  added = green
+  changed = yellow
+  untracked = red
+
+[pager]
+  # Use delta for git blame output too.
+  blame = delta
+
+[interactive]
+  # Use delta coloring in interactive add/patch screens.
+  diffFilter = delta --color-only
+
+[delta]
+  # Improve diff navigation and readability.
+  navigate = true
+  hyperlinks = true
+  side-by-side = true

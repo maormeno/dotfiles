@@ -1,0 +1,12 @@
+# Core shell
+brew "zsh" # Z shell used as the primary interactive shell.
+
+# Zsh plugin dependencies (Homebrew-managed)
+brew "zsh-autosuggestions" # Suggest commands from shell history as you type.
+brew "zsh-syntax-highlighting" # Highlight valid/invalid command syntax in real time.
+brew "zsh-completions" # Add extra completion definitions for many CLIs.
+
+# Core desktop applications
+cask "ghostty" # GPU-accelerated terminal emulator.
+cask "raycast" # Launcher and command palette for macOS.
+cask "arc" # Arc browser.

@@ -1,4 +1,13 @@
+# Keep repository documentation out of $HOME.
 README.md
+LICENSE
+
+# Keep bootstrap script repo-local.
+.setup.sh
+
+# Never apply Git or CI metadata to $HOME.
 .git/
 .github/
-install.sh
+
+# Ignore local reference snapshot used for planning.
+reference-dotfiles-repo/

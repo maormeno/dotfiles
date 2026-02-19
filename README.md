@@ -1,84 +1,94 @@
 # dotfiles
 
-> Truly minimalistic dotfiles managed with [chezmoi](https://www.chezmoi.io/)
+Minimal macOS dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
-## 🎯 What's Included
+## Scope
 
-This dotfiles repository provides automatic installation and setup for:
+- Supported platform: macOS only.
+- Canonical bootstrap entrypoint: `.setup.sh`.
+- Daily sync command: `chezmoi update`.
+- Package installs are declarative via `run_onchange` scripts and Brewfiles.
+- No encrypted secrets workflow is included in this repository.
 
-- **Ghostty** - Modern GPU-accelerated terminal emulator
-- **Zsh** - Enhanced shell with essential plugins only:
-  - `zsh-autosuggestions` - Command suggestions based on history
-  - `zsh-syntax-highlighting` - Real-time syntax highlighting
-  - `zsh-completions` - Additional completion definitions
-- **Arc** - The Browser Company's Arc browser
-- **Raycast** - Productivity launcher for macOS
+## Bootstrap
 
-## 🚀 Quick Start
-
-Run this one-liner to install everything:
+Run:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/install.sh)
+curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh | bash
 ```
 
-Or clone and run manually:
+What `.setup.sh` does:
 
-```bash
-git clone https://github.com/maormeno/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-./install.sh
-```
+1. Checks macOS compatibility.
+2. Checks Xcode Command Line Tools, Homebrew, and chezmoi.
+3. Prompts before installing any missing prerequisite.
+4. Runs `chezmoi init --apply maormeno/dotfiles` on first setup.
+5. Runs `chezmoi update` on already-initialized setups.
 
-## 📦 What Happens During Installation
+## Daily Usage
 
-1. Installs [chezmoi](https://www.chezmoi.io/) if not present
-2. Clones this dotfiles repository
-3. Runs installation scripts for each component
-4. Applies dotfile configurations to your home directory
-
-## 🔄 Updating
-
-To update your dotfiles after the initial installation:
+Use this command to pull latest changes and apply them:
 
 ```bash
 chezmoi update
 ```
 
-## 🛠 Manual Management
+Use these commands for manual inspection and edits:
 
-### Apply changes
 ```bash
+chezmoi diff
 chezmoi apply
-```
-
-### Edit a dotfile
-```bash
 chezmoi edit ~/.zshrc
 ```
 
-### See what would change
-```bash
-chezmoi diff
-```
+## Package Management
 
-## 📋 Requirements
+This repository keeps package declarations in two files:
 
-- **macOS** (primary target) or **Linux**
-- **Git**
-- **Homebrew** (macOS) or appropriate package manager (Linux)
+- `dot_Brewfile.essentials` -> `~/.Brewfile.essentials`
+- `dot_Brewfile.nice-cli` -> `~/.Brewfile.nice-cli`
 
-## 🎨 Philosophy
+Package installation is triggered by:
 
-This dotfiles repository follows a minimalistic approach:
+- `run_onchange_before_10_brew-essentials-packages.sh.tmpl`
+- `run_onchange_before_20_brew-nice-cli-packages.sh.tmpl`
 
-- ✅ Only essential tools and configurations
-- ✅ Automatic installation and setup
-- ✅ Version-controlled configuration
-- ✅ Easy to understand and modify
-- ❌ No bloat or unnecessary plugins
-- ❌ No complex customizations
+Each script runs `brew bundle` for its Brewfile. A checksum comment in each script makes chezmoi rerun it whenever the corresponding Brewfile content changes.
 
-## 📝 License
+## Configured Tools
+
+- Ghostty config: `dot_config/ghostty/config` for terminal visuals and window behavior.
+- Starship config: `dot_config/starship/starship.toml` for a clean prompt layout.
+- Git visual config: `dot_config/git/config` (delta pager and color tuning).
+- Dotfile fragments: `dot_dotfiles/` (`.aliases`, `.exports`, `.functions`, `.extra`).
+
+## Zsh Configuration
+
+`dot_zshrc` is Homebrew-first and has no network side effects on shell startup.
+
+- Loads fragments from `~/.dotfiles`.
+- Sources Homebrew plugin files directly.
+- Enables Starship when installed, with `adam1` as fallback.
+
+## One-Time macOS Visual Defaults
+
+`run_once_after_setup-system-settings.sh.tmpl` applies one-time visual defaults:
+
+- Show `~/Library` in Finder.
+- Auto-hide Dock.
+- Finder icon view preference.
+- Trackpad right-click and scroll-direction defaults.
+
+## Repository Notes
+
+Repo-only files are excluded from apply via `.chezmoiignore`:
+
+- `README.md`
+- `LICENSE`
+- `.setup.sh`
+- `.github/`
+
+## License
 
 MIT

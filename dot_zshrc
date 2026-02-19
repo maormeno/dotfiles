@@ -1,30 +1,46 @@
-# Minimalistic .zshrc with essential plugins only
+# Primary Zsh entrypoint managed by chezmoi.
 
-# History configuration
+# Load shared dotfiles fragments that do not depend on completion init.
+for file in ~/.dotfiles/.{aliases,exports,functions}; do
+  [[ -r "$file" && -f "$file" ]] && source "$file"
+done
+unset file
+
+# Keep shell history persistent and deduplicated.
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 setopt appendhistory
+setopt share_history
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
 
-# Essential completions
+# Resolve Homebrew prefix for completion paths.
+BREW_PREFIX=""
+if command -v brew >/dev/null 2>&1; then
+  BREW_PREFIX="$(brew --prefix)"
+fi
+
+# Load Homebrew completion definitions before compinit.
+if [[ -n "$BREW_PREFIX" && -d "$BREW_PREFIX/share/zsh-completions" ]]; then
+  fpath=("$BREW_PREFIX/share/zsh-completions" $fpath)
+fi
+
+# Initialize completion system.
 autoload -Uz compinit
 compinit
 
-# zinit - Plugin manager (minimal setup)
-# Note: zinit should be installed by run_once_install-zsh.sh.tmpl
-# This is a fallback in case the user applies .zshrc manually
-if [[ ! -d ~/.local/share/zinit/zinit.git ]]; then
-    mkdir -p ~/.local/share/zinit
-    git clone https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git
+# Load extras late so plugin/prompt hooks initialize in final shell state.
+if [[ -r ~/.dotfiles/.extra && -f ~/.dotfiles/.extra ]]; then
+  source ~/.dotfiles/.extra
 fi
-source ~/.local/share/zinit/zinit.git/zinit.zsh
 
-# Essential plugins only
-zinit light zsh-users/zsh-autosuggestions
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
+# Fallback prompt when Starship is not installed.
+if ! command -v starship >/dev/null 2>&1; then
+  autoload -Uz promptinit
+  promptinit
+  prompt adam1
+fi
 
-# Prompt - Simple and clean
-autoload -Uz promptinit
-promptinit
-prompt adam1
+# Cleanup temporary variable.
+unset BREW_PREFIX
