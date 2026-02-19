@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-# Source repository used by chezmoi init.
-DOTFILES_REPO="maormeno/dotfiles"
+# Private dotfiles repo over SSH.
+DOTFILES_REPO="git@github.com:maormeno/dotfiles.git"
+SUDO_KEEPALIVE_PID=""
 
 # Load Homebrew into PATH/environment when installed outside current shell PATH.
 load_homebrew_env() {
@@ -39,15 +40,9 @@ prompt_yes_no() {
     fi
 
     case "${reply}" in
-      [Yy]|[Yy][Ee][Ss])
-        return 0
-        ;;
-      [Nn]|[Nn][Oo]|"")
-        return 1
-        ;;
-      *)
-        echo "Please answer y or n."
-        ;;
+      [Yy]|[Yy][Ee][Ss]) return 0 ;;
+      [Nn]|[Nn][Oo]|"") return 1 ;;
+      *) echo "Please answer y or n." ;;
     esac
   done
 }
@@ -58,6 +53,35 @@ ensure_macos() {
     echo "This setup is supported on macOS only."
     exit 1
   fi
+}
+
+cleanup_sudo_session() {
+  if [[ -n "${SUDO_KEEPALIVE_PID:-}" ]]; then
+    kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
+  fi
+}
+
+# Ask for sudo once up-front and keep it alive for the script duration.
+ensure_sudo_session() {
+  if [[ "$(id -u)" -eq 0 ]]; then
+    echo "Run this script as your normal user, not root."
+    echo "It will request sudo when needed."
+    exit 1
+  fi
+
+  if ! sudo -v; then
+    echo "sudo authentication failed."
+    exit 1
+  fi
+
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+  done 2>/dev/null &
+  SUDO_KEEPALIVE_PID="$!"
+
+  trap cleanup_sudo_session EXIT
 }
 
 # Ensure Xcode CLI tools exist because many build/install steps depend on them.
@@ -151,31 +175,52 @@ ensure_chezmoi() {
   echo "chezmoi installed."
 }
 
+# Verify SSH access to the private dotfiles repository.
+ensure_repo_access() {
+  echo "Checking SSH access to ${DOTFILES_REPO}..."
+  if git ls-remote "${DOTFILES_REPO}" >/dev/null 2>&1; then
+    echo "SSH access confirmed."
+    return
+  fi
+
+  echo "Cannot access ${DOTFILES_REPO} via SSH."
+  echo "Ensure your GitHub SSH key is configured and loaded, then re-run."
+  exit 1
+}
+
 # Initialize dotfiles on first run, otherwise update existing setup.
 run_chezmoi() {
-  local chezmoi_flags=()
-
-  # Disable TTY prompts when script stdin is piped (for curl|bash use cases).
+  local no_tty=0
   if [[ ! -t 0 ]]; then
-    chezmoi_flags+=(--no-tty)
+    no_tty=1
   fi
 
   if [[ -d "${HOME}/.local/share/chezmoi/.git" ]]; then
     echo "chezmoi source already initialized. Running update..."
-    chezmoi update "${chezmoi_flags[@]}"
+    if (( no_tty )); then
+      chezmoi update --no-tty
+    else
+      chezmoi update
+    fi
   else
     echo "Initializing chezmoi from ${DOTFILES_REPO}..."
-    chezmoi init --apply "${chezmoi_flags[@]}" "${DOTFILES_REPO}"
+    if (( no_tty )); then
+      chezmoi init --apply --no-tty "${DOTFILES_REPO}"
+    else
+      chezmoi init --apply "${DOTFILES_REPO}"
+    fi
   fi
 }
 
 # Main setup flow in dependency order.
 echo "Setting up dotfiles..."
 ensure_macos
+ensure_sudo_session
 ensure_xcode_clt
 ensure_homebrew
 ensure_git
 ensure_chezmoi
+ensure_repo_access
 run_chezmoi
 
 echo "Done."
