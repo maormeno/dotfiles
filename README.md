@@ -114,6 +114,20 @@ Applied target files in your home directory:
 
 ## Arc, Cursor, and Codex
 
+### System defaults
+
+`run_once_after_setup-system-settings.sh.tmpl` sets:
+
+1. Finder path bar visible.
+2. Finder sidebar visible.
+3. Scrollbars always visible (`AppleShowScrollBars = Always`).
+4. Trackpad defaults (right-click enabled, non-natural scrolling).
+5. Keyboard input-source order:
+   - Primary: English (`ABC`)
+   - Secondary: Spanish (`Spanish-ISO`)
+   - Third: Japanese (`Romaji`)
+6. Active/default keyboard source set to `ABC`.
+
 ### Arc/Cursor defaults
 
 `run_once_after_setup-default-apps.sh.tmpl` sets:
@@ -228,6 +242,10 @@ Run:
 compaudit
 compaudit | while read -r path; do chmod go-w "$path"; done
 ```
+
+### Keyboard input-source order not immediately visible
+
+Input-source preference changes may require a sign out/restart to fully reflect in UI menus.
 
 ## Repository Notes
 
