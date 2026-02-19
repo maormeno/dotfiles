@@ -35,18 +35,23 @@ defaults write com.apple.finder ShowSidebar -bool true
 # Keep scrollbars visible in all apps.
 defaults write -g AppleShowScrollBars -string "Always"
 
-# Set keyboard input source order: primary ABC, secondary Spanish, third Japanese Romaji.
-# Use InputSourceID values to avoid layout-id differences across macOS versions/hardware.
-defaults write com.apple.HIToolbox AppleEnabledInputSources -array \
-  '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }' \
-  '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.Spanish-ISO"; }' \
-  '{ "InputSourceKind" = "Keyboard Input Method"; "Bundle ID" = "com.apple.inputmethod.Kotoeri.RomajiTyping"; }'
+# Ensure ABC is available without replacing the full enabled source list.
+enabled_input_sources="$(defaults read com.apple.HIToolbox AppleEnabledInputSources 2>/dev/null || true)"
+if ! printf '%s' "${enabled_input_sources}" | grep -Fq 'KeyboardLayout Name" = ABC;' && \
+   ! printf '%s' "${enabled_input_sources}" | grep -Fq 'com.apple.keylayout.ABC'; then
+  defaults write com.apple.HIToolbox AppleEnabledInputSources -array-add \
+    '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }'
+fi
+unset enabled_input_sources
 
-# Keep input-source history aligned with the intended order.
-defaults write com.apple.HIToolbox AppleInputSourceHistory -array \
-  '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }' \
-  '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.Spanish-ISO"; }' \
-  '{ "InputSourceKind" = "Keyboard Input Method"; "Bundle ID" = "com.apple.inputmethod.Kotoeri.RomajiTyping"; }'
+# Keep history aligned so ABC can be selected consistently.
+input_source_history="$(defaults read com.apple.HIToolbox AppleInputSourceHistory 2>/dev/null || true)"
+if ! printf '%s' "${input_source_history}" | grep -Fq 'KeyboardLayout Name" = ABC;' && \
+   ! printf '%s' "${input_source_history}" | grep -Fq 'com.apple.keylayout.ABC'; then
+  defaults write com.apple.HIToolbox AppleInputSourceHistory -array-add \
+    '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }'
+fi
+unset input_source_history
 
 # Select ABC as the active/default keyboard input source.
 defaults write com.apple.HIToolbox AppleSelectedInputSources -array \

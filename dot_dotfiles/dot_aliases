@@ -10,8 +10,12 @@ alias ..='cd ../'
 alias ...='cd ../../'
 
 # Readability-focused command replacements.
-alias cat='bat --paging=never'      # Syntax-highlighted file output.
-alias ls='eza --color=always --no-quotes'  # Cleaner file listing.
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --paging=never'  # Syntax-highlighted file output.
+fi
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --color=always --no-quotes'  # Cleaner file listing.
+fi
 
 # Convenience shortcuts.
 alias c='clear'

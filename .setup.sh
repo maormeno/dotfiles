@@ -212,6 +212,19 @@ run_chezmoi() {
   fi
 }
 
+# Prevent zsh completion security prompts from Homebrew group-writable dirs.
+harden_homebrew_permissions() {
+  local brew_prefix=""
+  if ! command -v brew >/dev/null 2>&1; then
+    return
+  fi
+
+  brew_prefix="$(brew --prefix 2>/dev/null || true)"
+  if [[ -n "${brew_prefix}" && -d "${brew_prefix}/share" ]]; then
+    chmod go-w "${brew_prefix}/share" 2>/dev/null || true
+  fi
+}
+
 # Main setup flow in dependency order.
 echo "Setting up dotfiles..."
 ensure_macos
@@ -222,5 +235,7 @@ ensure_git
 ensure_chezmoi
 ensure_repo_access
 run_chezmoi
+harden_homebrew_permissions
 
 echo "Done."
+echo "Shell changes apply to new sessions. To reload now, run: exec zsh -l"

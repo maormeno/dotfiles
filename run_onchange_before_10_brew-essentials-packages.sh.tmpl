@@ -14,4 +14,11 @@ fi
 brew bundle --file=/dev/stdin <<'EOF'
 {{ include "dot_Brewfile.essentials" }}
 EOF
+
+# Keep completion parent dirs secure for zsh compinit checks.
+BREW_PREFIX="$(brew --prefix 2>/dev/null || true)"
+if [[ -n "${BREW_PREFIX}" && -d "${BREW_PREFIX}/share" ]]; then
+  chmod go-w "${BREW_PREFIX}/share" 2>/dev/null || true
+fi
+unset BREW_PREFIX
 {{- end -}}

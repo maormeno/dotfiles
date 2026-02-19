@@ -20,13 +20,13 @@ Minimal, macOS-only dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 Run:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh) && exec zsh -l
 ```
 
 Alternative:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh | bash
+(curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh | bash) && exec zsh -l
 ```
 
 ## Operational Model
@@ -45,6 +45,8 @@ It does this in order:
 6. Runs one of:
    - `chezmoi init --apply maormeno/dotfiles` (first machine setup)
    - `chezmoi update` (already initialized machine)
+
+Bootstrap runs in a child `bash` process. It cannot replace your current terminal process; open a new tab or run `exec zsh -l` after completion.
 
 ### 2) Daily sync (`chezmoi update`)
 
@@ -123,10 +125,9 @@ Applied target files in your home directory:
 2. Finder sidebar visible.
 3. Scrollbars always visible (`AppleShowScrollBars = Always`).
 4. Trackpad defaults (right-click enabled, non-natural scrolling).
-5. Keyboard input-source order:
-   - Primary: English (`ABC`)
-   - Secondary: Spanish (`Spanish-ISO`)
-   - Third: Japanese (`Romaji`)
+5. Keyboard source safety:
+   - Ensures `ABC` is available.
+   - Preserves existing enabled input sources.
 6. Active/default keyboard source set to `ABC`.
 
 ### Arc/Cursor defaults
@@ -135,7 +136,8 @@ Applied target files in your home directory:
 
 1. Arc as default for `http` and `https`.
 2. Cursor as default for common code/text file types.
-3. Git `core.editor` to `cursor --wait`.
+
+Git `core.editor` is managed declaratively in `dot_config/git/config`.
 
 ### Codex installation
 
@@ -237,14 +239,16 @@ Defaults may partially apply if macOS rejects a specific mapping. Current setup 
 
 ### `zsh compinit: insecure directories`
 
-Run:
+Setup hooks and shell startup try to auto-fix this by removing group/world write bits from Homebrew completion parent directories.
+
+If you still see it, run:
 
 ```bash
 compaudit
 compaudit | while read -r path; do chmod go-w "$path"; done
 ```
 
-### Keyboard input-source order not immediately visible
+### Keyboard input-source changes not immediately visible
 
 Input-source preference changes may require a sign out/restart to fully reflect in UI menus.
 

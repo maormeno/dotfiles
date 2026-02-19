@@ -1,7 +1,7 @@
 # Primary Zsh entrypoint managed by chezmoi.
 
 # Load shared dotfiles fragments that do not depend on completion init.
-for file in ~/.dotfiles/.{aliases,exports,functions}; do
+for file in ~/.dotfiles/.{exports,aliases,functions}; do
   [[ -r "$file" && -f "$file" ]] && source "$file"
 done
 unset file
@@ -32,8 +32,20 @@ if [[ -d "$HOME/.zsh/completions" ]]; then
 fi
 
 # Initialize completion system.
-autoload -Uz compinit
-compinit
+autoload -Uz compaudit compinit
+
+# Homebrew can leave completion parent directories group-writable; repair them.
+typeset -a insecure_completion_dirs
+insecure_completion_dirs=("${(@f)$(compaudit 2>/dev/null)}")
+if (( ${#insecure_completion_dirs[@]} > 0 )); then
+  for insecure_dir in "${insecure_completion_dirs[@]}"; do
+    chmod go-w "$insecure_dir" 2>/dev/null || true
+  done
+fi
+unset insecure_dir insecure_completion_dirs
+
+# Use non-interactive completion init to avoid startup prompts.
+compinit -i
 
 # Load extras late so plugin/prompt hooks initialize in final shell state.
 if [[ -r ~/.dotfiles/.extra && -f ~/.dotfiles/.extra ]]; then

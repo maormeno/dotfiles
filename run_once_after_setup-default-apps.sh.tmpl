@@ -49,11 +49,6 @@ if [[ -d "/Applications/Cursor.app" ]]; then
     echo "Could not resolve Cursor bundle id; skipping Cursor file associations."
   fi
 
-  # Ensure Git commit editor matches the default IDE.
-  if command -v git >/dev/null 2>&1; then
-    git config --global core.editor "cursor --wait"
-    echo "Git core.editor set to cursor --wait."
-  fi
 else
   echo "Cursor.app not found; skipping IDE default setup."
 fi

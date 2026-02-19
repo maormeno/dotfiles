@@ -1,5 +1,12 @@
 # Environment exports shared by shell sessions.
 
+# Ensure Homebrew binaries are in PATH for both Apple Silicon and Intel Macs.
+if [[ -d /opt/homebrew/bin ]]; then
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+elif [[ -d /usr/local/bin ]]; then
+  export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+fi
+
 # Prefer Cursor as the default editor/IDE when available.
 if command -v cursor >/dev/null 2>&1; then
   export EDITOR='cursor --wait'

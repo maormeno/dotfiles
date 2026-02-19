@@ -3,6 +3,8 @@
 [core]
   # Use delta for richer side-by-side diffs.
   pager = delta
+  # Keep Git editor aligned with the configured IDE default.
+  editor = cursor --wait
 
 [color]
   # Enable color output when terminal supports it.
