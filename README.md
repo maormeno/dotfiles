@@ -15,6 +15,12 @@ Minimal macOS dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 Run:
 
 ```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh)
+```
+
+Alternative (works too, but stdin is piped):
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh | bash
 ```
 

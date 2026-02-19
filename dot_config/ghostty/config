@@ -26,7 +26,5 @@ cursor-style=underline
 # Start shells from the home directory by default.
 working-directory=home
 
-# Prevent inheriting cwd across new windows/tabs/splits.
+# Prevent inheriting cwd for new windows.
 window-inherit-working-directory=false
-tab-inherit-working-directory=false
-split-inherit-working-directory=false

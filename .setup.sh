@@ -136,12 +136,19 @@ ensure_chezmoi() {
 
 # Initialize dotfiles on first run, otherwise update existing setup.
 run_chezmoi() {
+  local chezmoi_flags=()
+
+  # Disable TTY prompts when script stdin is piped (for curl|bash use cases).
+  if [[ ! -t 0 ]]; then
+    chezmoi_flags+=(--no-tty)
+  fi
+
   if [[ -d "${HOME}/.local/share/chezmoi/.git" ]]; then
     echo "chezmoi source already initialized. Running update..."
-    chezmoi update
+    chezmoi update "${chezmoi_flags[@]}"
   else
     echo "Initializing chezmoi from ${DOTFILES_REPO}..."
-    chezmoi init --apply "${DOTFILES_REPO}"
+    chezmoi init --apply "${chezmoi_flags[@]}" "${DOTFILES_REPO}"
   fi
 }
 
