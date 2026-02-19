@@ -1,16 +1,21 @@
 # dotfiles
 
-Minimal macOS dotfiles managed with [chezmoi](https://www.chezmoi.io/).
+Minimal, macOS-only dotfiles managed with [chezmoi](https://www.chezmoi.io/).
+
+## Goals
+
+- Clarity: one bootstrap entrypoint, one daily command.
+- Correctness: declarative package/state management.
+- Conciseness: minimal moving parts, no duplicated setup flows.
 
 ## Scope
 
-- Supported platform: macOS only.
+- Supported OS: macOS.
 - Canonical bootstrap entrypoint: `.setup.sh`.
 - Daily sync command: `chezmoi update`.
-- Package installs are declarative via `run_onchange` scripts and Brewfiles.
-- No encrypted secrets workflow is included in this repository.
+- No encrypted secrets workflow in v1.
 
-## Bootstrap
+## Quick Start
 
 Run:
 
@@ -18,58 +23,120 @@ Run:
 bash <(curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh)
 ```
 
-Alternative (works too, but stdin is piped):
+Alternative:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh | bash
 ```
 
-What `.setup.sh` does:
+## Operational Model
 
-1. Checks macOS compatibility.
-2. Checks Xcode Command Line Tools, Homebrew, and chezmoi.
-3. Prompts before installing any missing prerequisite.
-4. Runs `chezmoi init --apply maormeno/dotfiles` on first setup.
-5. Runs `chezmoi update` on already-initialized setups.
+### 1) Bootstrap (`.setup.sh`)
 
-## Codex Installation
+`.setup.sh` is the only supported initial entrypoint.
 
-Codex CLI and Codex desktop app are installed automatically on first machine setup by:
-`run_once_after_setup-codex.sh.tmpl`
+It does this in order:
 
-What it does:
+1. Verifies macOS.
+2. Ensures Xcode Command Line Tools are installed (prompted).
+3. Ensures Homebrew is installed (prompted).
+4. Ensures chezmoi is installed (prompted).
+5. Runs one of:
+   - `chezmoi init --apply maormeno/dotfiles` (first machine setup)
+   - `chezmoi update` (already initialized machine)
 
-1. Requires Homebrew on macOS.
-2. Installs the `codex` Homebrew cask (CLI) if missing.
-3. Installs the `codex-app` Homebrew cask (desktop app) if missing.
-4. Generates Zsh completion at `~/.zsh/completions/_codex`.
-5. Prints a reminder to run `codex login`.
+### 2) Daily sync (`chezmoi update`)
 
-Manual install/update command:
+Use this for normal ongoing maintenance:
 
 ```bash
-brew install --cask codex codex-app
+chezmoi update
 ```
 
-Manual completion refresh command:
+`chezmoi update` pulls the repo and applies changes. It does **not** re-prompt prerequisite installers.
+
+### 3) Hook behavior
+
+- `run_once_*` scripts: execute once per machine state (unless state is reset).
+- `run_onchange_*` scripts: execute only when tracked input content changes.
+
+In this repo that means:
+
+- Package reconciliation runs when Brewfile declarations change.
+- One-time defaults (system/app preferences, Codex installation) do not run every update.
+
+## Package Management
+
+Two package sets are declared in-repo:
+
+- `dot_Brewfile.essentials`
+- `dot_Brewfile.nice-cli`
+
+Applied via:
+
+- `run_onchange_before_10_brew-essentials-packages.sh.tmpl`
+- `run_onchange_before_20_brew-nice-cli-packages.sh.tmpl`
+
+Both scripts call `brew bundle` from managed content, so package state is declarative and tied to these files.
+
+## What Is Managed
+
+### Shell and CLI UX
+
+- `dot_zshrc`
+- `dot_dotfiles/` (`.aliases`, `.exports`, `.functions`, `.extra`)
+- `dot_config/starship/starship.toml`
+
+### Terminal and Git visuals
+
+- `dot_config/ghostty/config`
+- `dot_config/git/config`
+
+### Cursor config (managed through `Library/...` in source state)
+
+Source-state files in this repo:
+
+- `Library/Application Support/Cursor/User/settings.json`
+- `Library/Application Support/Cursor/User/keybindings.json`
+- `Library/Application Support/Cursor/User/snippets/README.md`
+
+Applied target files in your home directory:
+
+- `~/Library/Application Support/Cursor/User/settings.json`
+- `~/Library/Application Support/Cursor/User/keybindings.json`
+- `~/Library/Application Support/Cursor/User/snippets/README.md`
+
+### One-time setup hooks
+
+- `run_once_after_setup-codex.sh.tmpl`
+- `run_once_after_setup-default-apps.sh.tmpl`
+- `run_once_after_setup-system-settings.sh.tmpl`
+
+## Arc, Cursor, and Codex
+
+### Arc/Cursor defaults
+
+`run_once_after_setup-default-apps.sh.tmpl` sets:
+
+1. Arc as default for `http` and `https`.
+2. Cursor as default for common code/text file types.
+3. Git `core.editor` to `cursor --wait`.
+
+### Codex installation
+
+`run_once_after_setup-codex.sh.tmpl` installs:
+
+- Codex CLI (`codex` cask)
+- Codex app (`codex-app` cask)
+- Zsh completion at `~/.zsh/completions/_codex`
+
+Then run:
 
 ```bash
-mkdir -p ~/.zsh/completions
-codex completion zsh > ~/.zsh/completions/_codex
+codex login
 ```
 
-## Arc and Cursor Defaults
-
-Default browser/IDE preferences are applied once by:
-`run_once_after_setup-default-apps.sh.tmpl`
-
-What it does:
-
-1. Sets Arc as default browser handler for `http` and `https`.
-2. Sets Cursor as default handler for common code/text file types.
-3. Sets Git `core.editor` to `cursor --wait`.
-
-Cursor tweak shortcuts (from your shell):
+### Cursor tweak shortcuts
 
 ```bash
 cursorcfg
@@ -77,76 +144,39 @@ cursor-settings
 cursor-keys
 ```
 
-Managed Cursor config files:
+## Git + SSH (Custom Key Name)
 
-- `~/Library/Application Support/Cursor/User/settings.json`
-- `~/Library/Application Support/Cursor/User/keybindings.json`
-- `~/Library/Application Support/Cursor/User/snippets/`
-
-Edit managed Cursor files with chezmoi:
-
-```bash
-chezmoi edit "$HOME/Library/Application Support/Cursor/User/settings.json"
-chezmoi edit "$HOME/Library/Application Support/Cursor/User/keybindings.json"
-```
-
-If you need to re-run this manually:
-
-```bash
-chezmoi execute-template < run_once_after_setup-default-apps.sh.tmpl | bash
-```
-
-## Daily Usage
-
-Use this command to pull latest changes and apply them:
-
-```bash
-chezmoi update
-```
-
-Use these commands for manual inspection and edits:
-
-```bash
-chezmoi diff
-chezmoi apply
-chezmoi edit ~/.zshrc
-```
-
-## Git and SSH Setup
-
-Set up Git identity/config first using the official GitHub guide:
+Follow GitHub's Git setup guide first:
 [Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git#setting-up-git)
 
-Use SSH and always use a custom key filename (not the default `id_ed25519`).
+Use SSH and always use a custom key filename.
 
-1. Generate an SSH key.
+1. Generate key:
 
 ```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-At the prompt, enter a custom file path:
+When prompted, set a custom path:
 
 ```text
 Enter file in which to save the key (/Users/mateo/.ssh/id_ed25519): /Users/mateo/.ssh/maormeno_git_key
 ```
 
-2. Add the key to your macOS SSH agent.
+2. Add key to agent:
 
 ```bash
 eval "$(ssh-agent -s)"
 ssh-add --apple-use-keychain ~/.ssh/maormeno_git_key
 ```
 
-3. Add the public key to GitHub.
+3. Copy public key and add it to GitHub:
 
 ```bash
 pbcopy < ~/.ssh/maormeno_git_key.pub
 ```
 
-Then paste it in GitHub `Settings` -> `SSH and GPG keys`.
-
-4. Use the same key name in `~/.ssh/config`.
+4. Use the same key path in `~/.ssh/config`:
 
 ```sshconfig
 Host github.com
@@ -156,70 +186,82 @@ Host github.com
   IdentitiesOnly yes
 ```
 
-Use the same basename (`maormeno_git_key`) in all related places:
-private key path, `.pub` file, and `IdentityFile`.
+Use the same basename everywhere (`maormeno_git_key`): key file, `.pub`, and `IdentityFile`.
 
-You can also manage `~/.ssh/config` with chezmoi by adding a managed file in this repo.
+## Common Commands
 
-## Package Management
+```bash
+chezmoi diff
+chezmoi apply
+chezmoi edit ~/.zshrc
+chezmoi edit "$HOME/Library/Application Support/Cursor/User/settings.json"
+chezmoi edit "$HOME/Library/Application Support/Cursor/User/keybindings.json"
+```
 
-This repository keeps package declarations in two files:
+Manually rerun one-time hooks when needed:
 
-- `dot_Brewfile.essentials` -> `~/.Brewfile.essentials`
-- `dot_Brewfile.nice-cli` -> `~/.Brewfile.nice-cli`
+```bash
+chezmoi execute-template < run_once_after_setup-codex.sh.tmpl | bash
+chezmoi execute-template < run_once_after_setup-default-apps.sh.tmpl | bash
+chezmoi execute-template < run_once_after_setup-system-settings.sh.tmpl | bash
+```
 
-Package installation is triggered by:
+## Troubleshooting
 
-- `run_onchange_before_10_brew-essentials-packages.sh.tmpl`
-- `run_onchange_before_20_brew-nice-cli-packages.sh.tmpl`
+### `Error: No Brewfile found`
 
-Each script runs `brew bundle` for its Brewfile. A checksum comment in each script makes chezmoi rerun it whenever the corresponding Brewfile content changes.
+This indicates an old package hook version. Pull latest dotfiles and rerun:
 
-## Configured Tools
+```bash
+chezmoi update
+```
 
-- Ghostty config: `dot_config/ghostty/config` for terminal visuals and window behavior.
-- Starship config: `dot_config/starship/starship.toml` for a clean prompt layout.
-- Git visual config: `dot_config/git/config` (delta pager and color tuning).
-- Cursor user config: `Library/Application Support/Cursor/User/` (settings, keybindings, snippets).
-- Codex install hook: `run_once_after_setup-codex.sh.tmpl` for first-run CLI installation.
-- Dotfile fragments: `dot_dotfiles/` (`.aliases`, `.exports`, `.functions`, `.extra`).
+### `duti`/LaunchServices handler warnings
 
-## Zsh Configuration
+Defaults may partially apply if macOS rejects a specific mapping. Current setup prioritizes robust browser defaults (`http`/`https`) and continues safely.
 
-`dot_zshrc` is Homebrew-first and has no network side effects on shell startup.
+### `zsh compinit: insecure directories`
 
-- Loads fragments from `~/.dotfiles`.
-- Sources Homebrew plugin files directly.
-- Enables Starship when installed, with `adam1` as fallback.
+Run:
 
-## One-Time macOS Visual Defaults
-
-`run_once_after_setup-system-settings.sh.tmpl` applies one-time visual defaults:
-
-- Show `~/Library` in Finder.
-- Auto-hide Dock.
-- Finder icon view preference.
-- Trackpad right-click and scroll-direction defaults.
-
-`run_once_after_setup-default-apps.sh.tmpl` applies one-time app defaults:
-
-- Arc as default browser for web links (`http`/`https`).
-- Cursor as default IDE/file handler.
+```bash
+compaudit
+compaudit | while read -r path; do chmod go-w "$path"; done
+```
 
 ## Repository Notes
 
-Repo-only files are excluded from apply via `.chezmoiignore`:
+These stay repo-local (not applied to `$HOME`) via `.chezmoiignore`:
 
 - `README.md`
 - `LICENSE`
 - `.setup.sh`
+- `.git/`
 - `.github/`
-
-## Acknowledgments
-
-This setup was heavily informed by Carlos Cuesta's dotfiles repository:
-[carloscuesta/dotfiles](https://github.com/carloscuesta/dotfiles?tab=readme-ov-file)
+- `reference-dotfiles-repo/`
 
 ## License
 
 MIT
+
+## References and Valuable Reads
+
+- This repo (source of truth): [maormeno/dotfiles](https://github.com/maormeno/dotfiles)
+- Reference inspiration: [carloscuesta/dotfiles](https://github.com/carloscuesta/dotfiles?tab=readme-ov-file)
+- Chezmoi homepage/docs: [chezmoi.io](https://www.chezmoi.io/)
+- Chezmoi scripts (`run_once_`, `run_onchange_`): [Use scripts to perform actions](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)
+- Homebrew install docs: [brew.sh](https://brew.sh/)
+- Homebrew Bundle docs (`brew bundle` / Brewfile): [Brew Bundle and Brewfile](https://docs.brew.sh/Brew-Bundle-and-Brewfile)
+- Xcode Command Line Tools context: [Apple Developer - Xcode resources](https://developer.apple.com/xcode/resources/)
+- Git setup guide: [GitHub Docs - Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git#setting-up-git)
+- SSH with GitHub: [GitHub Docs - Connecting to GitHub with SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- Generate SSH keys: [GitHub Docs - Generating a new SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- Add SSH key to account: [GitHub Docs - Adding a new SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+- Ghostty docs: [ghostty.org/docs](https://ghostty.org/docs)
+- Starship config docs: [starship.rs/config](https://starship.rs/config/)
+- Git Delta docs/repo: [dandavison/delta](https://github.com/dandavison/delta)
+- Arc docs/help center: [resources.arc.net](https://resources.arc.net/hc/en-us)
+- Cursor docs: [docs.cursor.com](https://docs.cursor.com/)
+- `duti` (default app handler tool): [Homebrew Formula - duti](https://formulae.brew.sh/formula/duti)
+- Codex project/repo: [openai/codex](https://github.com/openai/codex)
+- Codex getting started: [OpenAI Help - Codex CLI Getting Started](https://help.openai.com/en/articles/11096431-openai-codex-ci-getting-started)
