@@ -1,24 +1,201 @@
 {
-  // Keep startup uncluttered.
-  "workbench.startupEditor": "none",
+  // ============================================================================
+  // INDEX
+  // 1) Meta, Startup, Sync
+  // 2) Theme System (OS-aware) + Visual Identity
+  // 3) Editor Core Behavior
+  // 4) Language Features and Per-Language Overrides
+  // 5) Explorer, Files, Search
+  // 6) Git + SCM + Merge
+  // 7) Terminal
+  // 8) Window + Workbench Shell
+  // 9) Tooling & Extensions (Prettier, ESLint, cSpell, Copilot, etc.)
+  // 10) Profiles, Experimental, Misc
+  // ============================================================================
 
-  // Avoid replacing existing tabs with preview tabs.
-  "workbench.editor.enablePreview": false,
+  // ============================================================================
+  // 1) Meta, Startup, Sync
+  // ============================================================================
+  "workbench.startupEditor": "none", // Start directly with an uncluttered workspace.
+  "telemetry.telemetryLevel": "off", // Keep telemetry disabled.
 
-  // Editor readability defaults.
-  "editor.fontSize": 14,
-  "editor.lineHeight": 1.45,
+  // ============================================================================
+  // 2) Theme System (OS-aware) + Visual Identity
+  // ============================================================================
+  "window.autoDetectColorScheme": true, // Follow system light/dark mode.
+  "workbench.colorTheme": "Squirrelsong Light", // Deterministic fallback if auto-detect fails.
+  "workbench.preferredLightColorTheme": "Squirrelsong Light", // Explicit light theme.
+  "workbench.preferredDarkColorTheme": "Squirrelsong Dark", // Explicit dark theme.
+  "workbench.iconTheme": "catppuccin-latte", // Keep icon theme stable across modes.
+  "workbench.colorCustomizations": { // Preserve only indent-guide visibility tuning.
+    "editorActiveIndentGuide": "#6f6f6faa",
+    "editorIndentGuide.activeBackground1": "#6f6f6faa",
+    "editorIndentGuide.background1": "#8a8a8a55",
+    "editorIndentGuides": "#8a8a8a55"
+  },
+  "catppuccin-icons.hidesExplorerArrows": true, // Cleaner file tree visuals.
+
+  // ============================================================================
+  // 3) Editor Core Behavior
+  // ============================================================================
+  "breadcrumbs.enabled": false, // Remove location breadcrumb noise.
+  "comments.openView": "never", // Avoid opening comment panel automatically.
+  "comments.visible": false, // Keep inline comments hidden by default.
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.autoClosingBrackets": "never",
+  "editor.autoClosingComments": "never",
+  "editor.autoClosingQuotes": "never",
+  "editor.autoIndent": "advanced",
+  "editor.autoSurround": "never",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.detectIndentation": false,
+  "editor.fontFamily": "Fira Code, \"Symbols Nerd Font Mono\"",
   "editor.fontLigatures": true,
-  "editor.minimap.enabled": false,
+  "editor.fontSize": 15,
+  "editor.formatOnSave": false,
+  "editor.guides.highlightActiveIndentation": true,
+  "editor.guides.indentation": true,
+  "editor.inlineSuggest.suppressSuggestions": true,
+  "editor.lineHeight": 1.6,
+  "editor.lineNumbers": "interval",
+  "editor.minimap.showSlider": "always",
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "other": "on",
+    "strings": "on"
+  },
+  "editor.renderLineHighlight": "none",
+  "editor.renderWhitespace": "boundary", // Show indentation whitespace, not normal inter-word spaces.
+  "editor.rulers": [
+    150
+  ],
+  "editor.snippetSuggestions": "bottom",
+  "editor.suggestSelection": "first",
+  "editor.tabCompletion": "on",
+  "editor.wordBasedSuggestions": "currentDocument",
 
-  // Save/format hygiene defaults.
-  "editor.formatOnSave": true,
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
+  // ============================================================================
+  // 4) Language Features and Per-Language Overrides
+  // ============================================================================
+  "javascript.preferences.importModuleSpecifier": "project-relative",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "[astro]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.trimTrailingWhitespace": false
+  },
+  "[scminput]": {
+    "editor.rulers": [
+      72
+    ],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 72
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 
-  // Terminal readability defaults.
-  "terminal.integrated.fontSize": 13,
+  // ============================================================================
+  // 5) Explorer, Files, Search
+  // ============================================================================
+  "explorer.confirmDelete": true,
+  "explorer.confirmDragAndDrop": true,
+  "explorer.openEditors.visible": 1,
+  "files.associations": {
+    "*.js.snap": "javascript",
+    ".prettierrc": "json"
+  },
+  "files.exclude": {
+    "**/node_modules/**/*": true,
+    "**/package-lock.json": true,
+    "**/pnpm-lock.yaml": true,
+    "**/yarn.lock": true
+  },
+  "files.hotExit": "onExitAndWindowClose",
+  "search.decorations.badges": false,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/package-lock.json": true,
+    "**/pnpm-lock.yaml": true,
+    "**/yarn.lock": true
+  },
+  "search.seedOnFocus": true,
+  "search.useParentIgnoreFiles": true,
 
-  // Enable smooth access to settings sync from day one.
-  "settingsSync.ignoredExtensions": []
+  // ============================================================================
+  // 6) Git + SCM + Merge
+  // ============================================================================
+  "git.closeDiffOnOperation": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.mergeEditor": true,
+  "git.openRepositoryInParentFolders": "always",
+  "merge-conflict.autoNavigateNextConflict.enabled": true,
+
+  // ============================================================================
+  // 7) Terminal
+  // ============================================================================
+  "terminal.integrated.automationProfile.osx": {
+    "path": "/opt/homebrew/bin/zsh",
+    "args": [
+      "-i"
+    ]
+  },
+
+  // ============================================================================
+  // 8) Window + Workbench Shell
+  // ============================================================================
+  "chat.commandCenter.enabled": false,
+  "window.commandCenter": false,
+  "window.openFilesInNewWindow": "off",
+  "window.openFoldersInNewWindow": "off",
+  "window.zoomLevel": 0.15,
+  "workbench.editor.decorations.badges": false,
+  "workbench.editor.editorActionsLocation": "hidden",
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.sideBar.location": "right",
+  "workbench.tips.enabled": false,
+
+  // ============================================================================
+  // 9) Tooling & Extensions (Prettier, ESLint, cSpell, Copilot, etc.)
+  // ============================================================================
+  "eslint.useESLintClass": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "html",
+    "astro"
+  ],
+  "prettier.requireConfig": true
+
+  // ============================================================================
+  // 10) Profiles, Experimental, Misc
+  // ============================================================================
+  // Intentionally empty after ADHD-focused prune.
 }
