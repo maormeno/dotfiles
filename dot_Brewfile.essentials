@@ -1,6 +1,7 @@
 # Core shell
 brew "zsh" # Z shell used as the primary interactive shell.
 brew "duti" # Set default macOS app handlers for URLs and file types.
+brew "dockutil" # Manage Dock contents declaratively.
 
 # Zsh plugin dependencies (Homebrew-managed)
 brew "zsh-autosuggestions" # Suggest commands from shell history as you type.

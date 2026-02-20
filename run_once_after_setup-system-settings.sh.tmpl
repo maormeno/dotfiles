@@ -11,15 +11,6 @@ osascript -e 'tell application "System Settings" to quit' || true
 # Always show ~/Library in Finder.
 chflags nohidden "$HOME/Library"
 
-# Prefer non-natural scrolling for precision on trackpad.
-defaults write -g com.apple.swipescrolldirection -bool false
-
-# Enable right-click corner behavior on trackpad.
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-defaults write com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick -int 2
-defaults write com.apple.AppleMultitouchTrackpad TrackpadRightClick -bool true
-
 # Make dock auto-hide for more screen space.
 defaults write com.apple.dock autohide -bool true
 
@@ -35,28 +26,32 @@ defaults write com.apple.finder ShowSidebar -bool true
 # Keep scrollbars visible in all apps.
 defaults write -g AppleShowScrollBars -string "Always"
 
-# Ensure ABC is available without replacing the full enabled source list.
-enabled_input_sources="$(defaults read com.apple.HIToolbox AppleEnabledInputSources 2>/dev/null || true)"
-if ! printf '%s' "${enabled_input_sources}" | grep -Fq 'KeyboardLayout Name" = ABC;' && \
-   ! printf '%s' "${enabled_input_sources}" | grep -Fq 'com.apple.keylayout.ABC'; then
-  defaults write com.apple.HIToolbox AppleEnabledInputSources -array-add \
-    '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }'
-fi
-unset enabled_input_sources
+# Keep Dock minimal: Finder (fixed by macOS) + Ghostty + Arc only.
+defaults write com.apple.dock show-recents -bool false
+defaults write com.apple.dock persistent-others -array
 
-# Keep history aligned so ABC can be selected consistently.
-input_source_history="$(defaults read com.apple.HIToolbox AppleInputSourceHistory 2>/dev/null || true)"
-if ! printf '%s' "${input_source_history}" | grep -Fq 'KeyboardLayout Name" = ABC;' && \
-   ! printf '%s' "${input_source_history}" | grep -Fq 'com.apple.keylayout.ABC'; then
-  defaults write com.apple.HIToolbox AppleInputSourceHistory -array-add \
-    '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }'
-fi
-unset input_source_history
+if command -v dockutil >/dev/null 2>&1; then
+  # Finder and Trash are system-fixed; remove everything else.
+  dockutil --no-restart --remove all
 
-# Select ABC as the active/default keyboard input source.
-defaults write com.apple.HIToolbox AppleSelectedInputSources -array \
-  '{ "InputSourceKind" = "Keyboard Layout"; "InputSourceID" = "com.apple.keylayout.ABC"; }'
-defaults write com.apple.HIToolbox AppleCurrentKeyboardLayoutInputSourceID -string "com.apple.keylayout.ABC"
+  if [[ -d "/Applications/Ghostty.app" ]]; then
+    dockutil --no-restart --add "/Applications/Ghostty.app"
+  elif [[ -d "${HOME}/Applications/Ghostty.app" ]]; then
+    dockutil --no-restart --add "${HOME}/Applications/Ghostty.app"
+  else
+    echo "Ghostty.app not found; not added to Dock."
+  fi
+
+  if [[ -d "/Applications/Arc.app" ]]; then
+    dockutil --no-restart --add "/Applications/Arc.app"
+  elif [[ -d "${HOME}/Applications/Arc.app" ]]; then
+    dockutil --no-restart --add "${HOME}/Applications/Arc.app"
+  else
+    echo "Arc.app not found; not added to Dock."
+  fi
+else
+  echo "dockutil is not installed; skipping Dock app layout."
+fi
 
 # Restart affected services to apply settings quickly.
 killall Dock >/dev/null 2>&1 || true

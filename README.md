@@ -124,11 +124,9 @@ Applied target files in your home directory:
 1. Finder path bar visible.
 2. Finder sidebar visible.
 3. Scrollbars always visible (`AppleShowScrollBars = Always`).
-4. Trackpad defaults (right-click enabled, non-natural scrolling).
-5. Keyboard source safety:
-   - Ensures `ABC` is available.
-   - Preserves existing enabled input sources.
-6. Active/default keyboard source set to `ABC`.
+4. Dock reset to a minimal app set: Finder (system-fixed), Ghostty, Arc.
+5. Scrolling behavior is manual (not automated by setup hooks).
+6. Keyboard/input-source behavior is manual (not automated by setup hooks).
 
 ### Arc/Cursor defaults
 
@@ -249,10 +247,6 @@ If you still see it, run:
 compaudit
 compaudit | while read -r path; do chmod go-w "$path"; done
 ```
-
-### Keyboard input-source changes not immediately visible
-
-Input-source preference changes may require a sign out/restart to fully reflect in UI menus.
 
 ## Repository Notes
 
