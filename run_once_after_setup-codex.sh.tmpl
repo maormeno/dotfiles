@@ -26,12 +26,33 @@ else
   echo "Codex app installed."
 fi
 
+# Register Codex in LaunchServices and Spotlight so it appears in app search promptly.
+CODEX_APP_PATH=""
+if [[ -d "/Applications/Codex.app" ]]; then
+  CODEX_APP_PATH="/Applications/Codex.app"
+elif [[ -d "${HOME}/Applications/Codex.app" ]]; then
+  CODEX_APP_PATH="${HOME}/Applications/Codex.app"
+fi
+
+if [[ -n "${CODEX_APP_PATH}" ]]; then
+  LSREGISTER_BIN="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+  if [[ -x "${LSREGISTER_BIN}" ]]; then
+    "${LSREGISTER_BIN}" -f "${CODEX_APP_PATH}" >/dev/null 2>&1 || true
+  fi
+  mdimport "${CODEX_APP_PATH}" >/dev/null 2>&1 || true
+  echo "Codex app registration/index refresh requested."
+else
+  echo "Codex app path not found after install; skipping registration/index refresh."
+fi
+
 # Generate zsh completion so `codex` subcommands auto-complete.
 if command -v codex >/dev/null 2>&1; then
   mkdir -p "${HOME}/.zsh/completions"
   codex completion zsh > "${HOME}/.zsh/completions/_codex"
   echo "Codex zsh completion installed at ~/.zsh/completions/_codex."
 fi
+
+unset CODEX_APP_PATH LSREGISTER_BIN
 
 # Next step reminder for authentication.
 echo "Run 'codex login' to authenticate."

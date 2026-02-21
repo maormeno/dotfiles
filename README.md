@@ -79,8 +79,9 @@ Applied via:
 
 - `run_onchange_before_10_brew-essentials-packages.sh.tmpl`
 - `run_onchange_before_20_brew-nice-cli-packages.sh.tmpl`
+- `run_onchange_before_30_cursor-extensions.sh.tmpl`
 
-Both scripts call `brew bundle` from managed content, so package state is declarative and tied to these files.
+The brew hooks call `brew bundle` from managed content, and the Cursor hook reconciles a required extension baseline.
 
 ## What Is Managed
 
@@ -144,6 +145,7 @@ Git `core.editor` is managed declaratively in `dot_config/git/config`.
 - Codex CLI (`codex` cask)
 - Codex app (`codex-app` cask)
 - Zsh completion at `~/.zsh/completions/_codex`
+- LaunchServices + Spotlight refresh for Codex app discoverability
 
 Then run:
 
@@ -159,6 +161,17 @@ cursor-settings
 cursor-keys
 ```
 
+### Cursor extension baseline
+
+`run_onchange_before_30_cursor-extensions.sh.tmpl` ensures these extensions are installed:
+
+- `sapegin.theme-squirrelsongdark` (Squirrelsong Dark Theme)
+- `sapegin.theme-squirrelsonglight` (Squirrelsong Light Theme)
+- `catppuccin.catppuccin-vsc-icons` (Catppuccin Icons for VSCode)
+- `esbenp.prettier-vscode` (Prettier)
+
+It installs only missing extensions and exits cleanly when Cursor CLI is unavailable.
+
 ### Terminal UX defaults (Ghostty + Zsh)
 
 - Ghostty uses the custom dark theme from `dot_config/ghostty/themes/Squirrelsong Dark Deep Purple`.
@@ -166,9 +179,10 @@ cursor-keys
 - Ghostty explicitly pins `shell-integration = zsh` for deterministic shell integration behavior.
 - Ghostty pins `font-family = "FiraCode Nerd Font Mono"` for reliable prompt/file-icon glyph rendering.
 - Ghostty enables `window-save-state = always` to restore window/tab/split layout after normal exits.
+- Ghostty enables `quit-after-last-window-closed = true` so app close/reopen reliably restores saved layout.
 - Ghostty state restore is layout-level only; it does not resume running terminal processes after close.
 - FZF owns `Ctrl-R` history search via `eval "$(fzf --zsh)"`.
-- FZF default scope is wide/fast: hidden and ignored paths from the current directory, while skipping heavy directories (`.git,node_modules,.venv,venv,dist,build,.next,.cache,__pycache__,target`).
+- FZF uses upstream default behavior from `fzf --zsh` (no repo-level `FZF_DEFAULT_OPTS` override).
 - zoxide is enabled for directory jumping with `z <dir-fragment>`.
 - Atuin is enabled in local-only mode (no sync setup) and does not hijack `Ctrl-R` (`ATUIN_NOBIND=true`).
 - Starship path context uses native 3-segment truncation (`.../dir1/dir2/dir3`) and color-shifts in git repos.

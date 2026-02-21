@@ -25,6 +25,7 @@ jobs:
           # Rendered chezmoi templates should produce valid shell.
           chezmoi execute-template < run_onchange_before_10_brew-essentials-packages.sh.tmpl | bash -n
           chezmoi execute-template < run_onchange_before_20_brew-nice-cli-packages.sh.tmpl | bash -n
+          chezmoi execute-template < run_onchange_before_30_cursor-extensions.sh.tmpl | bash -n
           chezmoi execute-template < run_once_after_setup-codex.sh.tmpl | bash -n
           chezmoi execute-template < run_once_after_setup-default-apps.sh.tmpl | bash -n
           chezmoi execute-template < run_once_after_setup-system-settings.sh.tmpl | bash -n

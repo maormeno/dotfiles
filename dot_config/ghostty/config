@@ -45,3 +45,5 @@ macos-titlebar-style = tabs
 # Restore window/tab/split layout after normal app exits.
 # Non-goal: this does not resume running processes after close.
 window-save-state = always
+# Quit app when the last window closes so reopen reliably restores saved state.
+quit-after-last-window-closed = true

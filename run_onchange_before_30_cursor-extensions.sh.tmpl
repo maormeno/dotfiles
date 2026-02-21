@@ -1,0 +1,40 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Keep Cursor extensions declarative and reproducible.
+# rerun-trigger: sapegin.theme-squirrelsongdark,sapegin.theme-squirrelsonglight,catppuccin.catppuccin-vsc-icons,esbenp.prettier-vscode
+
+if ! command -v cursor >/dev/null 2>&1; then
+  echo "Cursor CLI is not installed; skipping Cursor extension setup."
+  exit 0
+fi
+
+required_extensions=(
+  "sapegin.theme-squirrelsongdark"
+  "sapegin.theme-squirrelsonglight"
+  "catppuccin.catppuccin-vsc-icons"
+  "esbenp.prettier-vscode"
+)
+
+installed_extensions="$(
+  cursor --list-extensions 2>/dev/null | tr '[:upper:]' '[:lower:]'
+)"
+
+installed_count=0
+skipped_count=0
+for extension_id in "${required_extensions[@]}"; do
+  normalized_id="$(tr '[:upper:]' '[:lower:]' <<<"${extension_id}")"
+  if grep -Fxq "${normalized_id}" <<<"${installed_extensions}"; then
+    echo "Cursor extension already installed: ${extension_id}"
+    skipped_count=$((skipped_count + 1))
+    continue
+  fi
+
+  echo "Installing Cursor extension: ${extension_id}"
+  cursor --install-extension "${extension_id}"
+  installed_count=$((installed_count + 1))
+done
+
+echo "Cursor extension reconciliation complete: installed=${installed_count}, already-present=${skipped_count}"
+{{- end -}}

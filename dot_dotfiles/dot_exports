@@ -41,8 +41,5 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # Point Starship to the managed config file.
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 
-# Rollback: comment this line to disable managed FZF UI defaults + wide/fast search scope.
-export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---height=45% --layout=reverse --border=rounded --walker-skip=.git,node_modules,.venv,venv,dist,build,.next,.cache,__pycache__,target}"
-
 # Slightly stronger default directory color in eza.
 export EZA_COLORS='di=1;34'
