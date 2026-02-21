@@ -15,9 +15,55 @@ Minimal, macOS-only dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 - Daily sync command: `chezmoi update`.
 - No encrypted secrets workflow in v1.
 
-## Prerequisite: GitHub SSH access
+## Git + SSH Setup (Required Before Quick Start)
 
-This repository is private. Complete this verification before first bootstrap:
+This repository is private and uses SSH for bootstrap access.
+
+Follow GitHub's Git setup guide first:
+[Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git#setting-up-git)
+
+Use SSH and always use a custom key filename.
+
+1. Generate key:
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+When prompted, set a custom path:
+
+```text
+Enter file in which to save the key (/Users/mateo/.ssh/id_ed25519): /Users/mateo/.ssh/maormeno_git_key
+```
+
+2. Add key to agent:
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add --apple-use-keychain ~/.ssh/maormeno_git_key
+```
+
+3. Copy public key and add it to GitHub:
+
+```bash
+pbcopy < ~/.ssh/maormeno_git_key.pub
+```
+
+4. Use the same key path in `~/.ssh/config`:
+
+```sshconfig
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/maormeno_git_key
+  IdentitiesOnly yes
+```
+
+Use the same basename everywhere (`maormeno_git_key`): key file, `.pub`, and `IdentityFile`.
+
+### Verify Access
+
+Run these checks before first bootstrap:
 
 ```bash
 ssh-add -l
@@ -203,52 +249,6 @@ It installs only missing extensions and exits cleanly when Cursor CLI is unavail
 - `ls` is icon-rich and dirs-first; use `ll` and `la` for detailed views.
 - Use `tsrun <cmd>` or `... | tsline` for per-line output timestamps (`HH:MM:SS.mmm`) when needed.
 - Use `hts` for ISO-style command history timestamps (`fc -li 1`).
-
-## Git + SSH (Custom Key Name)
-
-This is mandatory before first bootstrap (`.setup.sh`).
-
-Follow GitHub's Git setup guide first:
-[Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git#setting-up-git)
-
-Use SSH and always use a custom key filename.
-
-1. Generate key:
-
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-When prompted, set a custom path:
-
-```text
-Enter file in which to save the key (/Users/mateo/.ssh/id_ed25519): /Users/mateo/.ssh/maormeno_git_key
-```
-
-2. Add key to agent:
-
-```bash
-eval "$(ssh-agent -s)"
-ssh-add --apple-use-keychain ~/.ssh/maormeno_git_key
-```
-
-3. Copy public key and add it to GitHub:
-
-```bash
-pbcopy < ~/.ssh/maormeno_git_key.pub
-```
-
-4. Use the same key path in `~/.ssh/config`:
-
-```sshconfig
-Host github.com
-  HostName github.com
-  User git
-  IdentityFile ~/.ssh/maormeno_git_key
-  IdentitiesOnly yes
-```
-
-Use the same basename everywhere (`maormeno_git_key`): key file, `.pub`, and `IdentityFile`.
 
 ## Common Commands
 

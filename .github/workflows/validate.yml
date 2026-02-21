@@ -34,9 +34,16 @@ jobs:
         run: |
           # Ensure canonical bootstrap command stays documented.
           grep -n "raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh" README.md
-          # Ensure SSH prerequisite remains explicit for private-repo bootstrap.
-          grep -n "Prerequisite: GitHub SSH access" README.md
+          # Ensure SSH setup remains explicit for private-repo bootstrap.
+          grep -n "Git + SSH Setup (Required Before Quick Start)" README.md
           grep -n "git ls-remote git@github.com:maormeno/dotfiles.git" README.md
+          # Ensure SSH setup section stays before Quick Start.
+          ssh_line="$(grep -n '^## Git + SSH Setup (Required Before Quick Start)$' README.md | cut -d: -f1 | head -n1)"
+          quick_line="$(grep -n '^## Quick Start$' README.md | cut -d: -f1 | head -n1)"
+          if [[ -z "${ssh_line}" || -z "${quick_line}" || "${ssh_line}" -ge "${quick_line}" ]]; then
+            echo "README must place SSH setup section before Quick Start."
+            exit 1
+          fi
           # Ensure daily update workflow stays documented.
           grep -n "chezmoi update" README.md
           # Ensure deprecated entrypoint is not documented.
