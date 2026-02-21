@@ -1,5 +1,8 @@
 # Environment exports shared by shell sessions.
 
+# ============================================================================
+# 1) PATH and Core Toolchain
+# ============================================================================
 # Ensure Homebrew binaries are in PATH for both Apple Silicon and Intel Macs.
 if [[ -d /opt/homebrew/bin ]]; then
   export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
@@ -7,6 +10,9 @@ elif [[ -d /usr/local/bin ]]; then
   export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 fi
 
+# ============================================================================
+# 2) Editor Defaults
+# ============================================================================
 # Prefer Cursor as the default editor/IDE when available.
 if command -v cursor >/dev/null 2>&1; then
   export EDITOR='cursor --wait'
@@ -19,6 +25,9 @@ fi
 export VISUAL="$EDITOR"
 export GIT_EDITOR="$EDITOR"
 
+# ============================================================================
+# 3) Locale and XDG
+# ============================================================================
 # Keep locale explicit for tools that depend on UTF-8.
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -26,8 +35,14 @@ export LANG=en_US.UTF-8
 # Keep XDG config path explicit.
 export XDG_CONFIG_HOME="$HOME/.config"
 
+# ============================================================================
+# 4) Prompt and CLI UX
+# ============================================================================
 # Point Starship to the managed config file.
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
+
+# Rollback: comment this line to disable managed FZF UI defaults + wide/fast search scope.
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---height=45% --layout=reverse --border=rounded --walker-skip=.git,node_modules,.venv,venv,dist,build,.next,.cache,__pycache__,target}"
 
 # Slightly stronger default directory color in eza.
 export EZA_COLORS='di=1;34'

@@ -13,3 +13,6 @@ cask "ghostty" # GPU-accelerated terminal emulator.
 cask "raycast" # Launcher and command palette for macOS.
 cask "arc" # Arc browser.
 cask "cursor" # Cursor editor/IDE.
+
+# Fonts
+cask "font-fira-code-nerd-font" # Reliable Nerd Font glyphs for Starship and eza icons.

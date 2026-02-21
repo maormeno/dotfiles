@@ -1,25 +1,144 @@
 # Extra shell integrations loaded after aliases/exports/functions.
 
-# Resolve Homebrew prefix once for plugin paths.
+# ============================================================================
+# 1) Homebrew Prefix Resolution
+# ============================================================================
 BREW_PREFIX=""
 if command -v brew >/dev/null 2>&1; then
   BREW_PREFIX="$(brew --prefix)"
 fi
 
-# Load autosuggestions from Homebrew package.
+# ============================================================================
+# 2) FZF Integration (Ctrl-R + fuzzy completion)
+# ============================================================================
+# Rollback: comment this block to disable FZF keybindings and completion hooks.
+if command -v fzf >/dev/null 2>&1 && [[ "$TERM" != "dumb" ]] && [[ -t 0 ]] && [[ -t 1 ]]; then
+  eval "$(fzf --zsh)"
+fi
+
+# ============================================================================
+# 3) zoxide Integration (smart directory jumps via `z`)
+# ============================================================================
+# Rollback: comment this block to disable zoxide navigation.
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+
+# ============================================================================
+# 4) Atuin Integration (local-only history, no Ctrl-R takeover)
+# ============================================================================
+# Rollback: comment this block to disable Atuin shell integration.
+if command -v atuin >/dev/null 2>&1; then
+  export ATUIN_NOBIND=true
+  eval "$(atuin init zsh)"
+fi
+
+# ============================================================================
+# 5) Autosuggestions
+# ============================================================================
 if [[ -n "$BREW_PREFIX" && -r "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=248'
   source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-# Load syntax highlighting from Homebrew package.
+# ============================================================================
+# 6) Syntax Highlighting
+# ============================================================================
 if [[ -n "$BREW_PREFIX" && -r "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
-# Enable Starship prompt if installed.
-if command -v starship >/dev/null 2>&1; then
+# ============================================================================
+# 7) Starship Prompt (guard dumb terminal noise)
+# ============================================================================
+# Rollback: comment this block to disable Starship prompt initialization.
+if [[ "$TERM" != "dumb" ]] && command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
+fi
+
+# ============================================================================
+# 8) Prompt Duration Line (right-aligned, pre-prompt)
+# ============================================================================
+# Rollback: comment this block to disable right-aligned duration/status line.
+if [[ -o interactive ]] && [[ "$TERM" != "dumb" ]]; then
+  zmodload zsh/datetime 2>/dev/null || true
+  autoload -Uz add-zsh-hook
+
+  typeset -gi __prompt_cmd_start_ms=0
+
+  _prompt_now_ms() {
+    local sec_part frac_part
+    sec_part=${EPOCHREALTIME%.*}
+    frac_part=${EPOCHREALTIME#*.}
+    frac_part="${frac_part}000"
+    frac_part="${frac_part[1,3]}"
+    REPLY=$(( sec_part * 1000 + 10#$frac_part ))
+  }
+
+  _prompt_timer_preexec() {
+    _prompt_now_ms
+    __prompt_cmd_start_ms=$REPLY
+  }
+
+  _prompt_timer_precmd() {
+    local exit_code=$?
+    local -i now_ms elapsed_ms sec rem_ms width
+    local -i sig_num pad
+    local duration_text line_plain line_render err_plain err_render sig_hint sig_name
+
+    if (( __prompt_cmd_start_ms == 0 )); then
+      return
+    fi
+
+    _prompt_now_ms
+    now_ms=$REPLY
+    elapsed_ms=$(( now_ms - __prompt_cmd_start_ms ))
+    (( elapsed_ms < 0 )) && elapsed_ms=0
+
+    if (( elapsed_ms < 1000 )); then
+      duration_text="${elapsed_ms}ms"
+    else
+      sec=$(( elapsed_ms / 1000 ))
+      rem_ms=$(( elapsed_ms % 1000 ))
+      printf -v duration_text '%ss%03dms' "$sec" "$rem_ms"
+    fi
+
+    line_plain="$duration_text"
+    line_render="$duration_text"
+
+    if (( exit_code != 0 )); then
+      sig_hint=""
+      if (( exit_code >= 129 )); then
+        sig_num=$(( exit_code - 128 ))
+        sig_name="$(kill -l "$sig_num" 2>/dev/null || true)"
+        if [[ -n "$sig_name" ]]; then
+          sig_name="${sig_name:u}"
+          sig_hint=" SIG${sig_name}"
+        fi
+      fi
+
+      err_plain="(output error code: !${exit_code}${sig_hint})"
+      err_render="%F{red}${err_plain}%f"
+      line_plain="${duration_text} | ${err_plain}"
+      line_render="${duration_text} | ${err_render}"
+    fi
+
+    width=${COLUMNS:-80}
+    if (( ${#line_plain} < width )); then
+      pad=$(( width - ${#line_plain} ))
+      printf '%*s' "$pad" ''
+    fi
+    print -P -- "$line_render"
+
+    __prompt_cmd_start_ms=0
+  }
+
+  if ! (( ${preexec_functions[(Ie)_prompt_timer_preexec]} )); then
+    add-zsh-hook preexec _prompt_timer_preexec
+  fi
+  if ! (( ${precmd_functions[(Ie)_prompt_timer_precmd]} )); then
+    add-zsh-hook precmd _prompt_timer_precmd
+  fi
 fi
 
 # Cleanup temporary variable.

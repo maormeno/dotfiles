@@ -1,12 +1,15 @@
 # Starship schema for editor validation and completions.
 "$schema" = "https://starship.rs/config-schema.json"
 
+# ============================================================================
+# 1) Core Layout
+# ============================================================================
 # Add one blank line before each prompt block.
 add_newline = true
 
-# Keep prompt compact: context + git + time, then prompt char.
+# Keep prompt compact but high-signal.
 format = """
-$username$directory$git_branch$git_status$fill$time
+$username$directory$git_branch$git_status$python$fill$time
 $character
 """
 
@@ -14,16 +17,27 @@ $character
 [fill]
 symbol = " "
 
-# Show current user so remote/sudo sessions are obvious.
+# ============================================================================
+# 2) Core Context Modules
+# ============================================================================
+# Show user only when context changes (e.g., remote/sudo/root).
 [username]
-show_always = true
+show_always = false
 format = "[$user]($style) "
 style_user = "bold red"
+style_root = "bold red"
 
-# Show path in a strong readable color.
+# Show path with stronger context: last 3 segments, not repo-only.
 [directory]
 style = "bold green"
 read_only = " 🔒"
+truncate_to_repo = false
+truncation_length = 3
+truncation_symbol = ".../"
+home_symbol = "~"
+before_repo_root_style = "bold fg:213"
+repo_root_style = "bold fg:213"
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root$path]($repo_root_style)[$read_only]($read_only_style) "
 
 # Show branch with explicit icon.
 [git_branch]
@@ -38,6 +52,26 @@ ahead = "[↑](green bold)"
 behind = "[↓](red bold)"
 diverged = "[↕](yellow bold)"
 
+# Show Python version + venv when relevant.
+[python]
+disabled = false
+format = "[py$version( \\($virtualenv\\))]($style) "
+style = "bold yellow"
+version_format = "${major}.${minor}"
+
+# Handled by zsh pre-prompt duration/status line (kept for easy rollback).
+[status]
+disabled = true
+format = "[!$status]($style) "
+style = "bold red"
+
+# Handled by zsh pre-prompt duration/status line (kept for easy rollback).
+[cmd_duration]
+disabled = true
+min_time = 0
+format = "[took $duration]($style) "
+style = "bold yellow"
+
 # Show local time at prompt render.
 [time]
 disabled = false
@@ -45,10 +79,11 @@ time_format = "%R"
 style = "bold white"
 format = "[$time]($style)"
 
-# Keep language/runtime modules off for a cleaner prompt.
+# ============================================================================
+# 3) Runtime Module Noise Control
+# ============================================================================
+# Keep non-Python runtime modules off for a cleaner prompt.
 [nodejs]
-disabled = true
-[python]
 disabled = true
 [rust]
 disabled = true

@@ -1,13 +1,21 @@
-# Version control
+# ============================================================================
+# 1) Version Control
+# ============================================================================
 brew "git" # Distributed version control system.
 brew "git-delta" # Better side-by-side and colorized Git pager output.
 
-# Better defaults for common shell workflows
+# ============================================================================
+# 2) Core CLI Ergonomics
+# ============================================================================
 brew "bat" # cat replacement with syntax highlighting.
 brew "eza" # Modern ls replacement with clearer output.
 brew "fzf" # Fuzzy finder for files, history, and command output.
+brew "glow" # Render Markdown nicely in the terminal.
 
-# Developer runtime and shell UX
+# ============================================================================
+# 3) Shell UX and Runtime
+# ============================================================================
+brew "atuin" # Smarter shell history UI/search (local-only until sync is configured).
 brew "fnm" # Fast Node.js version manager.
 brew "starship" # Cross-shell prompt engine.
-brew "glow" # Render Markdown nicely in the terminal.
+brew "zoxide" # Smarter cd replacement for fast directory jumping.

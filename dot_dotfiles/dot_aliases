@@ -14,11 +14,14 @@ if command -v bat >/dev/null 2>&1; then
   alias cat='bat --paging=never'  # Syntax-highlighted file output.
 fi
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --color=always --no-quotes'  # Cleaner file listing.
+  alias ls='eza --icons=always --group-directories-first --color=always --no-quotes'  # Cleaner file listing.
+  alias ll='eza --icons=always --group-directories-first --color=always --no-quotes --long --header --group --binary --time-style=long-iso'  # Detailed listing.
+  alias la='eza --icons=always --group-directories-first --color=always --no-quotes --all --long --header --group --binary --time-style=long-iso'  # Detailed listing with dotfiles.
 fi
 
 # Convenience shortcuts.
 alias c='clear'
+alias hts='fc -li 1'
 alias zshedit='$EDITOR ~/.zshrc'
 alias f='open -a Finder ./'
 alias cursorcfg='open "$HOME/Library/Application Support/Cursor/User"' # Open Cursor User config directory.

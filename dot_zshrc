@@ -1,20 +1,29 @@
 # Primary Zsh entrypoint managed by chezmoi.
 
-# Load shared dotfiles fragments that do not depend on completion init.
+# ============================================================================
+# 1) Bootstrap Shared Dotfiles
+# ============================================================================
+# Load shared fragments that do not depend on completion initialization.
 for file in ~/.dotfiles/.{exports,aliases,functions}; do
   [[ -r "$file" && -f "$file" ]] && source "$file"
 done
 unset file
 
-# Keep shell history persistent and deduplicated.
+# ============================================================================
+# 2) History Policy (Persistent + Deduplicated)
+# ============================================================================
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 setopt appendhistory
+setopt extended_history
 setopt share_history
 setopt hist_ignore_all_dups
 setopt hist_save_no_dups
 
+# ============================================================================
+# 3) Completion Paths
+# ============================================================================
 # Resolve Homebrew prefix for completion paths.
 BREW_PREFIX=""
 if command -v brew >/dev/null 2>&1; then
@@ -31,10 +40,12 @@ if [[ -d "$HOME/.zsh/completions" ]]; then
   fpath=("$HOME/.zsh/completions" $fpath)
 fi
 
-# Initialize completion system.
+# ============================================================================
+# 4) Completion Security + Cached Compinit
+# ============================================================================
 autoload -Uz compaudit compinit
 
-# Homebrew can leave completion parent directories group-writable; repair them.
+# Homebrew can leave completion parents group-writable; repair them.
 typeset -a insecure_completion_dirs
 insecure_completion_dirs=("${(@f)$(compaudit 2>/dev/null)}")
 if (( ${#insecure_completion_dirs[@]} > 0 )); then
@@ -44,10 +55,16 @@ if (( ${#insecure_completion_dirs[@]} > 0 )); then
 fi
 unset insecure_dir insecure_completion_dirs
 
-# Use non-interactive completion init to avoid startup prompts.
-compinit -i
+# Rollback: change to plain `compinit -i` if you want default compdump behavior.
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+mkdir -p "$ZSH_CACHE_DIR"
+ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump-${ZSH_VERSION}"
+compinit -i -d "$ZSH_COMPDUMP"
 
-# Load extras late so plugin/prompt hooks initialize in final shell state.
+# ============================================================================
+# 5) Late Integrations and Prompt Fallback
+# ============================================================================
+# Load extras late so plugin and prompt hooks initialize in final shell state.
 if [[ -r ~/.dotfiles/.extra && -f ~/.dotfiles/.extra ]]; then
   source ~/.dotfiles/.extra
 fi
@@ -59,5 +76,5 @@ if ! command -v starship >/dev/null 2>&1; then
   prompt adam1
 fi
 
-# Cleanup temporary variable.
-unset BREW_PREFIX
+# Cleanup temporary variables.
+unset BREW_PREFIX ZSH_CACHE_DIR ZSH_COMPDUMP

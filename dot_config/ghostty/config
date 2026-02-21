@@ -1,30 +1,47 @@
-# Ghostty visual configuration.
+# ============================================================================
+# 1) Startup and Shell Contract
+# ============================================================================
+# Rollback: comment this line to let Ghostty use your implicit login shell.
+command = /opt/homebrew/bin/zsh
+shell-integration = zsh
+working-directory = home
+window-inherit-working-directory = false
 
-# Keep font size explicit so terminal scale is predictable.
-font-size=16
+# ============================================================================
+# 2) Theme and Core Visual Identity
+# ============================================================================
+# Rollback: comment this line to go back to Ghostty default theme resolution.
+theme = Squirrelsong Dark Deep Purple
+bold-is-bright = true
+cursor-style = underline
+font-family = "FiraCode Nerd Font Mono"
+font-size = 16
+minimum-contrast = 1.1
+window-padding-x = 12
+window-padding-y = 10
 
-# Add breathing room around content.
-window-padding-x=12
-window-padding-y=10
+# Rollback: comment these lines to disable subtle glass.
+background-opacity = 0.94
+background-opacity-cells = false
 
-# Keep bold text visually distinct.
-bold-is-bright=true
+# ============================================================================
+# 3) Input, Clipboard, and Safety
+# ============================================================================
+clipboard-paste-protection = true
+clipboard-read = ask
+clipboard-write = allow
+confirm-close-surface = true
+mouse-hide-while-typing = true
 
-# Use Ghostty default theme resolution (fewer compatibility risks).
-# Add an explicit theme later if you choose a specific palette.
+# ============================================================================
+# 4) macOS Window Chrome
+# ============================================================================
+macos-titlebar-proxy-icon = hidden
+macos-titlebar-style = tabs
 
-# Hide mouse cursor while typing to reduce visual noise.
-mouse-hide-while-typing=true
-
-# Keep titlebar cleaner on macOS.
-macos-titlebar-proxy-icon=hidden
-macos-titlebar-style=tabs
-
-# Use an underline cursor for lower visual obstruction.
-cursor-style=underline
-
-# Start shells from the home directory by default.
-working-directory=home
-
-# Prevent inheriting cwd for new windows.
-window-inherit-working-directory=false
+# ============================================================================
+# 5) Window State Restore
+# ============================================================================
+# Restore window/tab/split layout after normal app exits.
+# Non-goal: this does not resume running processes after close.
+window-save-state = always

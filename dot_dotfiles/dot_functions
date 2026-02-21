@@ -1,5 +1,8 @@
 # Small utility functions used in interactive shells.
 
+# ============================================================================
+# 1) Navigation and File Helpers
+# ============================================================================
 # Create a directory and enter it immediately.
 mcd() {
   mkdir -p "$1" && cd "$1"
@@ -8,4 +11,27 @@ mcd() {
 # Create a zip archive from a folder name.
 zipf() {
   zip -r "$1".zip "$1"
+}
+
+# ============================================================================
+# 2) Timestamp Helpers (safe, opt-in)
+# ============================================================================
+# Prefix each piped line with HH:MM:SS.mmm.
+tsline() {
+  perl -MTime::HiRes=gettimeofday -MPOSIX=strftime -ne '
+    my ($sec, $usec) = gettimeofday();
+    my $stamp = strftime("%H:%M:%S", localtime($sec)) . sprintf(".%03d", int($usec / 1000));
+    print $stamp . " " . $_;
+  '
+}
+
+# Run a command and timestamp combined stdout+stderr output lines.
+tsrun() {
+  if (( $# == 0 )); then
+    echo "Usage: tsrun <command> [args...]" >&2
+    return 2
+  fi
+
+  "$@" 2>&1 | tsline
+  return ${pipestatus[1]}
 }

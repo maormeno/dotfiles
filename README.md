@@ -159,6 +159,25 @@ cursor-settings
 cursor-keys
 ```
 
+### Terminal UX defaults (Ghostty + Zsh)
+
+- Ghostty uses the custom dark theme from `dot_config/ghostty/themes/Squirrelsong Dark Deep Purple`.
+- Ghostty explicitly pins `command = /opt/homebrew/bin/zsh` for deterministic shell startup.
+- Ghostty explicitly pins `shell-integration = zsh` for deterministic shell integration behavior.
+- Ghostty pins `font-family = "FiraCode Nerd Font Mono"` for reliable prompt/file-icon glyph rendering.
+- Ghostty enables `window-save-state = always` to restore window/tab/split layout after normal exits.
+- Ghostty state restore is layout-level only; it does not resume running terminal processes after close.
+- FZF owns `Ctrl-R` history search via `eval "$(fzf --zsh)"`.
+- FZF default scope is wide/fast: hidden and ignored paths from the current directory, while skipping heavy directories (`.git,node_modules,.venv,venv,dist,build,.next,.cache,__pycache__,target`).
+- zoxide is enabled for directory jumping with `z <dir-fragment>`.
+- Atuin is enabled in local-only mode (no sync setup) and does not hijack `Ctrl-R` (`ATUIN_NOBIND=true`).
+- Starship path context uses native 3-segment truncation (`.../dir1/dir2/dir3`) and color-shifts in git repos.
+- Starship Python signal is compact (`pyX.Y (venv)`).
+- Command duration appears as a right-aligned pre-prompt line in mixed format (`532ms`, `1s234ms`), and shows `(output error code: !<code>)` on failures.
+- `ls` is icon-rich and dirs-first; use `ll` and `la` for detailed views.
+- Use `tsrun <cmd>` or `... | tsline` for per-line output timestamps (`HH:MM:SS.mmm`) when needed.
+- Use `hts` for ISO-style command history timestamps (`fc -li 1`).
+
 ## Git + SSH (Custom Key Name)
 
 Follow GitHub's Git setup guide first:
