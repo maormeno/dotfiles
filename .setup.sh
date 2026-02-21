@@ -177,6 +177,12 @@ ensure_chezmoi() {
 
 # Verify SSH access to the private dotfiles repository.
 ensure_repo_access() {
+  if ! command -v git >/dev/null 2>&1; then
+    echo "git is required to verify SSH repository access."
+    echo "Ensure Xcode Command Line Tools finished installing, then re-run .setup.sh."
+    exit 1
+  fi
+
   echo "Checking SSH access to ${DOTFILES_REPO}..."
   if git ls-remote "${DOTFILES_REPO}" >/dev/null 2>&1; then
     echo "SSH access confirmed."
@@ -184,7 +190,11 @@ ensure_repo_access() {
   fi
 
   echo "Cannot access ${DOTFILES_REPO} via SSH."
-  echo "Ensure your GitHub SSH key is configured and loaded, then re-run."
+  echo "Next steps:"
+  echo "  1) Verify key is loaded: ssh-add -l"
+  echo "  2) Test GitHub auth: ssh -T git@github.com"
+  echo "  3) Verify repo access: git ls-remote git@github.com:maormeno/dotfiles.git"
+  echo "After these succeed, re-run .setup.sh."
   exit 1
 }
 
@@ -230,9 +240,12 @@ echo "Setting up dotfiles..."
 ensure_macos
 ensure_sudo_session
 ensure_xcode_clt
+# Fail fast on SSH auth/repo access before any heavy package installs.
+ensure_repo_access
 ensure_homebrew
 ensure_git
 ensure_chezmoi
+# Defensive re-check in case keys/agent state changed during setup.
 ensure_repo_access
 run_chezmoi
 harden_homebrew_permissions

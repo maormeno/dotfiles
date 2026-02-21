@@ -15,6 +15,16 @@ Minimal, macOS-only dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 - Daily sync command: `chezmoi update`.
 - No encrypted secrets workflow in v1.
 
+## Prerequisite: GitHub SSH access
+
+This repository is private. Complete this verification before first bootstrap:
+
+```bash
+ssh-add -l
+ssh -T git@github.com
+git ls-remote git@github.com:maormeno/dotfiles.git
+```
+
 ## Quick Start
 
 Run:
@@ -39,10 +49,12 @@ It does this in order:
 
 1. Verifies macOS.
 2. Ensures Xcode Command Line Tools are installed (prompted).
-3. Ensures Homebrew is installed (prompted).
-4. Ensures git is installed (prompted).
-5. Ensures chezmoi is installed (prompted).
-6. Runs one of:
+3. Verifies SSH access to the private dotfiles repo (fail-fast preflight).
+4. Ensures Homebrew is installed (prompted).
+5. Ensures git is installed (prompted).
+6. Ensures chezmoi is installed (prompted).
+7. Re-verifies SSH access before init/update.
+8. Runs one of:
    - `chezmoi init --apply maormeno/dotfiles` (first machine setup)
    - `chezmoi update` (already initialized machine)
 
@@ -193,6 +205,8 @@ It installs only missing extensions and exits cleanly when Cursor CLI is unavail
 - Use `hts` for ISO-style command history timestamps (`fc -li 1`).
 
 ## Git + SSH (Custom Key Name)
+
+This is mandatory before first bootstrap (`.setup.sh`).
 
 Follow GitHub's Git setup guide first:
 [Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git#setting-up-git)

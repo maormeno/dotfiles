@@ -34,6 +34,9 @@ jobs:
         run: |
           # Ensure canonical bootstrap command stays documented.
           grep -n "raw.githubusercontent.com/maormeno/dotfiles/main/.setup.sh" README.md
+          # Ensure SSH prerequisite remains explicit for private-repo bootstrap.
+          grep -n "Prerequisite: GitHub SSH access" README.md
+          grep -n "git ls-remote git@github.com:maormeno/dotfiles.git" README.md
           # Ensure daily update workflow stays documented.
           grep -n "chezmoi update" README.md
           # Ensure deprecated entrypoint is not documented.
