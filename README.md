@@ -43,13 +43,7 @@ eval "$(ssh-agent -s)"
 ssh-add --apple-use-keychain ~/.ssh/maormeno_git_key
 ```
 
-3. Copy public key and add it to GitHub:
-
-```bash
-pbcopy < ~/.ssh/maormeno_git_key.pub
-```
-
-4. Use the same key path in `~/.ssh/config`:
+3. Use the same key path in `~/.ssh/config`:
 
 ```sshconfig
 Host github.com
@@ -60,6 +54,13 @@ Host github.com
 ```
 
 Use the same basename everywhere (`maormeno_git_key`): key file, `.pub`, and `IdentityFile`.
+
+4. Copy public key and add it to GitHub:
+
+```bash
+pbcopy < ~/.ssh/maormeno_git_key.pub
+```
+
 
 ### Verify Access
 
