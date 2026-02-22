@@ -1,0 +1,29 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Install Node.js LTS with fnm once during machine setup.
+if ! command -v fnm >/dev/null 2>&1; then
+  echo "fnm is required to install Node.js LTS."
+  echo "Install managed packages first (chezmoi update) and rerun this hook."
+  exit 1
+fi
+
+echo "Installing active Node.js LTS with fnm..."
+fnm install --lts
+
+echo "Setting Node.js default to lts-latest..."
+fnm default lts-latest
+
+current_version="$(fnm current 2>/dev/null || true)"
+list_summary="$(fnm list 2>/dev/null | head -n 1 || true)"
+
+echo "fnm current: ${current_version:-unknown}"
+if [[ -n "${list_summary}" ]]; then
+  echo "fnm list summary: ${list_summary}"
+else
+  echo "fnm list summary: no installed versions reported."
+fi
+
+unset current_version list_summary
+{{- end -}}

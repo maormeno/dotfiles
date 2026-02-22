@@ -34,7 +34,15 @@ if command -v atuin >/dev/null 2>&1; then
 fi
 
 # ============================================================================
-# 5) Autosuggestions
+# 5) Language Runtimes
+# ============================================================================
+# Rollback: comment this block to disable language runtime manager init hooks.
+if [[ -r ~/.dotfiles/.languages && -f ~/.dotfiles/.languages ]]; then
+  source ~/.dotfiles/.languages
+fi
+
+# ============================================================================
+# 6) Autosuggestions
 # ============================================================================
 if [[ -n "$BREW_PREFIX" && -r "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=248'
@@ -42,14 +50,14 @@ if [[ -n "$BREW_PREFIX" && -r "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosu
 fi
 
 # ============================================================================
-# 6) Syntax Highlighting
+# 7) Syntax Highlighting
 # ============================================================================
 if [[ -n "$BREW_PREFIX" && -r "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
 # ============================================================================
-# 7) Starship Prompt (guard dumb terminal noise)
+# 8) Starship Prompt (guard dumb terminal noise)
 # ============================================================================
 # Rollback: comment this block to disable Starship prompt initialization.
 if [[ "$TERM" != "dumb" ]] && command -v starship >/dev/null 2>&1; then
@@ -57,7 +65,7 @@ if [[ "$TERM" != "dumb" ]] && command -v starship >/dev/null 2>&1; then
 fi
 
 # ============================================================================
-# 8) Prompt Duration Line (right-aligned, pre-prompt)
+# 9) Prompt Duration Line (right-aligned, pre-prompt)
 # ============================================================================
 # Rollback: comment this block to disable right-aligned duration/status line.
 if [[ -o interactive ]] && [[ "$TERM" != "dumb" ]]; then

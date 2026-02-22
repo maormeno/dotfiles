@@ -142,12 +142,20 @@ Applied via:
 
 The brew hooks call `brew bundle` from managed content, and the Cursor hook reconciles a required extension baseline.
 
+## Language Runtimes (Node via fnm)
+
+- `fnm` is installed via `dot_Brewfile.nice-cli`.
+- Node.js runtime installation is handled once by `run_once_after_setup-node-fnm.sh.tmpl`.
+- The shell loads `~/.dotfiles/.languages`, which initializes `fnm` with `--use-on-cd`.
+- Version resolution is recursive, so `.nvmrc` / `.node-version` in parent folders are respected.
+- Package-manager baseline is npm-only (no Corepack/pnpm/yarn setup in dotfiles).
+
 ## What Is Managed
 
 ### Shell and CLI UX
 
 - `dot_zshrc`
-- `dot_dotfiles/` (`.aliases`, `.exports`, `.functions`, `.extra`)
+- `dot_dotfiles/` (`.aliases`, `.exports`, `.functions`, `.extra`, `.languages`)
 - `dot_config/starship/starship.toml`
 
 ### Terminal and Git visuals
@@ -173,6 +181,7 @@ Applied target files in your home directory:
 
 - `run_once_after_setup-codex.sh.tmpl`
 - `run_once_after_setup-default-apps.sh.tmpl`
+- `run_once_after_setup-node-fnm.sh.tmpl`
 - `run_once_after_setup-system-settings.sh.tmpl`
 
 ## Arc, Cursor, and Codex
@@ -244,6 +253,7 @@ It installs only missing extensions and exits cleanly when Cursor CLI is unavail
 - FZF uses upstream default behavior from `fzf --zsh` (no repo-level `FZF_DEFAULT_OPTS` override).
 - zoxide is enabled for directory jumping with `z <dir-fragment>`.
 - Atuin is enabled in local-only mode (no sync setup) and does not hijack `Ctrl-R` (`ATUIN_NOBIND=true`).
+- `~/.zshrc` sources `~/.zshrc.local` when present; use this local-only file for installer-managed shell snippets (for example, Google Cloud SDK).
 - Starship path context uses native 3-segment truncation (`.../dir1/dir2/dir3`) and color-shifts in git repos.
 - Starship Python signal is compact (`pyX.Y (venv)`).
 - Command duration appears as a right-aligned pre-prompt line in mixed format (`532ms`, `1s234ms`), and shows `(output error code: !<code>)` on failures.
@@ -266,6 +276,7 @@ Manually rerun one-time hooks when needed:
 ```bash
 chezmoi execute-template < run_once_after_setup-codex.sh.tmpl | bash
 chezmoi execute-template < run_once_after_setup-default-apps.sh.tmpl | bash
+chezmoi execute-template < run_once_after_setup-node-fnm.sh.tmpl | bash
 chezmoi execute-template < run_once_after_setup-system-settings.sh.tmpl | bash
 ```
 

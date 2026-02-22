@@ -17,5 +17,6 @@ brew "glow" # Render Markdown nicely in the terminal.
 # ============================================================================
 brew "atuin" # Smarter shell history UI/search (local-only until sync is configured).
 brew "fnm" # Fast Node.js version manager.
+brew "uv" # Python package/runtime manager for project-local environments.
 brew "starship" # Cross-shell prompt engine.
 brew "zoxide" # Smarter cd replacement for fast directory jumping.

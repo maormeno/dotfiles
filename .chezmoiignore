@@ -11,3 +11,6 @@ LICENSE
 
 # Ignore local reference snapshot used for planning.
 reference-dotfiles-repo/
+
+# Keep local-only shell extension repo-local and unapplied.
+dot_zshrc.local

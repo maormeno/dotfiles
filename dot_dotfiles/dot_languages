@@ -1,0 +1,12 @@
+# Language runtime integrations loaded by interactive shells.
+
+# ============================================================================
+# 1) Node.js via fnm (npm-only baseline)
+# ============================================================================
+# Rollback: comment this block to disable fnm runtime switching.
+if command -v fnm >/dev/null 2>&1; then
+  # Resolve .nvmrc/.node-version in current and parent directories.
+  export FNM_VERSION_FILE_STRATEGY=recursive
+  # Enable automatic Node version switching on directory changes.
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi

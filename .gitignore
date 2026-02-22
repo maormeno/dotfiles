@@ -1,5 +1,8 @@
 # Local reference snapshot used only for planning/comparison.
 reference-dotfiles-repo/
 
+# Keep local-only shell extension out of source control.
+dot_zshrc.local
+
 # macOS Finder metadata files.
 .DS_Store

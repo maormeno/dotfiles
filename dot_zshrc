@@ -69,6 +69,11 @@ if [[ -r ~/.dotfiles/.extra && -f ~/.dotfiles/.extra ]]; then
   source ~/.dotfiles/.extra
 fi
 
+# Load local-only shell customizations that must not be tracked in dotfiles.
+if [[ -r "$HOME/.zshrc.local" && -f "$HOME/.zshrc.local" ]]; then
+  source "$HOME/.zshrc.local"
+fi
+
 # Fallback prompt when Starship is not installed.
 if ! command -v starship >/dev/null 2>&1; then
   autoload -Uz promptinit
