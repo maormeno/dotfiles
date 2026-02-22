@@ -5,7 +5,7 @@
 command = /opt/homebrew/bin/zsh
 shell-integration = zsh
 working-directory = home
-window-inherit-working-directory = false
+window-inherit-working-directory = true
 
 # ============================================================================
 # 2) Theme and Core Visual Identity

@@ -31,7 +31,8 @@
     "editorActiveIndentGuide": "#6f6f6faa",
     "editorIndentGuide.activeBackground1": "#6f6f6faa",
     "editorIndentGuide.background1": "#8a8a8a55",
-    "editorIndentGuides": "#8a8a8a55"
+    "editorIndentGuides": "#8a8a8a55",
+    "git.blame.editorDecorationForeground": "#8a8a8a44"
   },
   "catppuccin-icons.hidesExplorerArrows": true, // Cleaner file tree visuals.
 
@@ -150,6 +151,8 @@
   // 6) Git + SCM + Merge
   // ============================================================================
   "git.closeDiffOnOperation": true,
+  "git.blame.editorDecoration.enabled": true,
+  "git.blame.editorDecoration.template": "${authorName} (${authorDateAgo})",
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
   "git.mergeEditor": true,
