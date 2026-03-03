@@ -39,7 +39,7 @@
   // ============================================================================
   // 3) Editor Core Behavior
   // ============================================================================
-//   "breadcrumbs.enabled": false, // Remove location breadcrumb noise.
+  "breadcrumbs.enabled": false, // Remove location breadcrumb noise.
   "comments.openView": "never", // Avoid opening comment panel automatically.
   "comments.visible": false, // Keep inline comments hidden by default.
   "editor.acceptSuggestionOnCommitCharacter": false,
@@ -129,9 +129,8 @@
   "explorer.openEditors.visible": 1,
   "files.associations": {
     "*.js.snap": "javascript",
-    ".prettierrc": "json",
-    "*.py": "python"
-},
+    ".prettierrc": "json"
+  },
   "files.exclude": {
     "**/node_modules/**/*": true,
     "**/package-lock.json": true,
@@ -210,11 +209,16 @@
   "terminal.integrated.fontFamily": "MesloLGS NF",
   "editor.linkedEditing": true,
   "window.zoomLevel": 0.5,
-"launch": {},
-"editor.minimap.enabled": false,
+  "launch": {},
+//   "[json]": {},
+  "workbench.statusBar.visible": false,
+  "editor.minimap.enabled": false,
+//   "breadcrumbs.enabled": false,
 //   "workbench.iconTheme": "material-icon-theme",
-"update.showReleaseNotes": false,
-"zenMode.hideLineNumbers": false,
+  "update.showReleaseNotes": false,
+  "workbench.activityBar.visible": false,
+  "zenMode.hideLineNumbers": false,
+  "zenMode.hideTabs": false,
   "editor.lineNumbers": "relative",
 
   "vim.leader": "<Space>",
@@ -278,7 +282,5 @@
     { "before": ["K"], "commands": ["editor.action.moveLinesUpAction"] },
     // toggle comment selection
     { "before": ["leader", "c"], "commands": ["editor.action.commentLine"] }
-],
-"workbench.activityBar.location": "hidden",
-"breadcrumbs.enabled": false
+  ]
 }

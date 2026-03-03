@@ -8,8 +8,8 @@
 
 [user]
   # Default commit identity.
-  name = maormeno
-  email = maormeno@uc.cl
+  name = mateo
+  email = mateo@fintual.com
 
 [color]
   # Enable color output when terminal supports it.

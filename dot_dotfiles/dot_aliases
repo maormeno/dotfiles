@@ -19,6 +19,9 @@ if command -v eza >/dev/null 2>&1; then
   alias la='eza --icons=always --group-directories-first --color=always --no-quotes --all --long --header --group --binary --time-style=long-iso'  # Detailed listing with dotfiles.
 fi
 
+# Git shortcuts.
+alias gbd='git branch | fzf -m | xargs git branch -D'
+
 # Convenience shortcuts.
 alias c='clear'
 alias hts='fc -li 1'

@@ -58,6 +58,16 @@
   // 2) Fold/Unfold and Bracket Key Rewires
   // ============================================================================
   {
+    "key": "cmd+k cmd+0",
+    "command": "-editor.foldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "cmd+k cmd+j",
+    "command": "-editor.unfoldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
     "key": "shift+cmd+[",
     "command": "-workbench.action.debug.prevConsole",
     "when": "inDebugRepl"
@@ -260,37 +270,37 @@
   // ============================================================================
   // NAVIGATION
   {
-    "key": "cmd+shift+a",
+    "key": "ctrl+shift+a",
     "command": "workbench.action.terminal.focusNext",
     "when": "terminalFocus"
   },
   {
-    "key": "cmd+shift+b",
+    "key": "ctrl+shift+b",
     "command": "workbench.action.terminal.focusPrevious",
     "when": "terminalFocus"
   },
   {
-    "key": "cmd+shift+j",
+    "key": "ctrl+shift+j",
     "command": "workbench.action.togglePanel"
   },
   {
-    "key": "cmd+shift+n",
+    "key": "ctrl+shift+n",
     "command": "workbench.action.terminal.new",
     "when": "terminalFocus"
   },
   {
-    "key": "cmd+shift+w",
+    "key": "ctrl+shift+w",
     "command": "workbench.action.terminal.kill",
     "when": "terminalFocus"
   },
   // FILE TREE
   {
     "command": "workbench.action.toggleSidebarVisibility",
-    "key": "cmd+e"
+    "key": "ctrl+e"
   },
   {
     "command": "workbench.files.action.focusFilesExplorer",
-    "key": "cmd+e",
+    "key": "ctrl+e",
     "when": "editorTextFocus"
   },
   {
@@ -303,16 +313,16 @@
     "key": "r",
     "when": "filesExplorerFocus && !inputFocus"
   },
-//   {
-//     "key": "shift+n",
-//     "command": "explorer.newFolder",
-//     "when": "explorerViewletFocus"
-//   },
-//   {
-//     "key": "shift+n",
-//     "command": "workbench.action.newWindow",
-//     "when": "!explorerViewletFocus"
-//   },
+  {
+    "key": "shift+n",
+    "command": "explorer.newFolder",
+    "when": "explorerViewletFocus"
+  },
+  {
+    "key": "shift+n",
+    "command": "workbench.action.newWindow",
+    "when": "!explorerViewletFocus"
+  },
   {
     "command": "deleteFile",
     "key": "d",
@@ -321,31 +331,11 @@
 
   // EXTRA
   {
-    "key": "cmd+shift+5",
+    "key": "ctrl+shift+5",
     "command": "editor.emmet.action.matchTag"
-},
-{
-    "key": "shift+alt+1",
-    "command": "editor.fold",
-    "when": "editorTextFocus && foldingEnabled"
-},
-{
-    "key": "alt+cmd+[",
-    "command": "-editor.fold",
-    "when": "editorTextFocus && foldingEnabled"
-},
-{
-    "key": "shift+alt+2",
-    "command": "editor.unfold",
-    "when": "editorTextFocus && foldingEnabled"
-},
-{
-    "key": "alt+cmd+]",
-    "command": "-editor.unfold",
-    "when": "editorTextFocus && foldingEnabled"
-},
-//   {
-//     "key": "cmd+z",
-//     "command": "workbench.action.toggleZenMode"
-//   }
+  },
+  {
+    "key": "ctrl+z",
+    "command": "workbench.action.toggleZenMode"
+  }
 ]
