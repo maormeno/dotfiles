@@ -30,3 +30,8 @@ alias f='open -a Finder ./'
 alias cursorcfg='open "$HOME/Library/Application Support/Cursor/User"' # Open Cursor User config directory.
 alias cursor-settings='$EDITOR "$HOME/Library/Application Support/Cursor/User/settings.json"' # Edit Cursor settings file.
 alias cursor-keys='$EDITOR "$HOME/Library/Application Support/Cursor/User/keybindings.json"' # Edit Cursor keybindings file.
+
+# Git commands alias
+
+alias gbd='git branch | fzf -m | xargs git branch -D'
+alias gbc='git branch | fzf | xargs git checkout'
