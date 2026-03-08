@@ -7,9 +7,13 @@
   editor = cursor --wait
 
 [user]
-  # Default commit identity.
-  name = mateo
-  email = mateo@fintual.com
+  # Default commit identity (personal).
+  name = maormeno
+  email = maormeno@uc.cl
+
+[include]
+  # Machine-local overrides (e.g., work email). Not managed by chezmoi.
+  path = ~/.config/git/config.local
 
 [color]
   # Enable color output when terminal supports it.

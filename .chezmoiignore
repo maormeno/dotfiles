@@ -1,6 +1,7 @@
 # Keep repository documentation out of $HOME.
 README.md
 LICENSE
+CLAUDE.md
 
 # Keep bootstrap script repo-local.
 .setup.sh
@@ -14,3 +15,9 @@ reference-dotfiles-repo/
 
 # Keep local-only shell extension repo-local and unapplied.
 dot_zshrc.local
+
+# Keep machine-local git overrides unmanaged.
+.config/git/config.local
+
+# Keep in-repo git documentation repo-local.
+.config/git/README.md

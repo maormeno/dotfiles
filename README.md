@@ -161,7 +161,7 @@ The brew hooks call `brew bundle` from managed content, and the Cursor hook reco
 ### Terminal and Git visuals
 
 - `dot_config/ghostty/config`
-- `dot_config/git/config`
+- `dot_config/git/config` (see [`dot_config/git/README.md`](dot_config/git/README.md) for identity overrides and delta pager details)
 
 ### Cursor config (managed through `Library/...` in source state)
 
